@@ -39,6 +39,7 @@ const StudyPartnerDetail = lazy(() => import("./pages/StudyPartnerDetail"));
 const StudyPartnerForm = lazy(() => import("./pages/StudyPartnerForm"));
 const SavedPosts = lazy(() => import("./pages/SavedPosts"));
 const Search = lazy(() => import("./pages/Search"));
+const TopicDetail = lazy(() => import("./pages/TopicDetail"));
 
 // Admin
 const AdminLayout = lazy(() => import("./features/admin/components/AdminLayout"));
@@ -122,6 +123,7 @@ const App = () => (
                 <Route path="/study-partners/:id" element={<ProtectedRoute><StudyPartnerDetail /></ProtectedRoute>} />
                 <Route path="/saved-posts" element={<ProtectedRoute><SavedPosts /></ProtectedRoute>} />
                 <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
+                <Route path="/topics/:slug" element={<ProtectedRoute><TopicDetail /></ProtectedRoute>} />
 
                 <Route path="/about" element={<About />} />
                 <Route path="/privacy" element={<Privacy />} />

@@ -29,26 +29,26 @@ export const useToggleEventRsvp = () => {
     mutationFn: async ({
       eventId,
       userId,
-      isGoing,
+      status = "going",
       attendeeId,
     }: {
       eventId: string;
       userId: string;
-      isGoing: boolean;
+      status?: "going" | "interested" | "none";
       attendeeId?: string;
     }) => {
-      if (isGoing && attendeeId) {
+      if (status === "none" && attendeeId) {
         const { error } = await supabase.from("event_attendees").delete().eq("id", attendeeId);
         if (error) throw error;
         return;
       }
       const { error } = await supabase.from("event_attendees").upsert(
-        { event_id: eventId, user_id: userId, status: "going" },
+        { event_id: eventId, user_id: userId, status },
         { onConflict: "event_id,user_id" }
       );
       if (error) throw error; 
     },
-    onMutate: async ({ eventId, userId, isGoing }) => {
+    onMutate: async ({ eventId, userId, status }) => {
       await qc.cancelQueries({ queryKey: ["events"] });
       const prev = qc.getQueryData<unknown[]>(["events"]);
       qc.setQueryData(["events"], (old: typeof prev) => {
@@ -56,15 +56,16 @@ export const useToggleEventRsvp = () => {
         return old.map((ev: Record<string, unknown>) => {
           if (ev.id !== eventId) return ev;
           const attendees = (ev.event_attendees as Array<Record<string, unknown>>) ?? [];
-          if (isGoing) {
+          if (status === "none") {
             return {
               ...ev,
               event_attendees: attendees.filter((a) => a.user_id !== userId),
             };
           }
+          const filtered = attendees.filter((a) => a.user_id !== userId);
           return {
             ...ev,
-            event_attendees: [...attendees, { id: "opt", user_id: userId, status: "going" }],
+            event_attendees: [...filtered, { id: "opt", user_id: userId, status }],
           };
         });
       });
@@ -74,7 +75,10 @@ export const useToggleEventRsvp = () => {
       if (ctx?.prev) qc.setQueryData(["events"], ctx.prev);
       toast.error(e.message);
     },
-    onSettled: () => qc.invalidateQueries({ queryKey: ["events"] }),
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ["events"] });
+      qc.invalidateQueries({ queryKey: ["recommended_events"] });
+    }
   });
 };
 
@@ -88,6 +92,43 @@ export const useUpcomingEvents = (limit: number = 3) => {
       if (error) throw error;
       return data ?? [];
     },
+  });
+};
+
+export const useRecommendedEvents = (userId: string | undefined, limit: number = 3) => {
+  return useQuery({
+    queryKey: ["recommended_events", userId, limit],
+    queryFn: async () => {
+      if (!userId) return [];
+      const { data, error } = await supabase.rpc("get_recommended_events", {
+        p_user_id: userId,
+        p_limit: limit,
+      });
+      if (error) {
+        console.warn("Failed to get recommended events, falling back to upcoming events:", error);
+        const { data: fallbackData, error: fallbackError } = await supabase.rpc("get_upcoming_events", {
+          p_limit: limit,
+        });
+        if (fallbackError) {
+          console.warn("Failed to get upcoming events RPC, falling back to standard select:", fallbackError);
+          const { data: standardData, error: standardError } = await supabase
+            .from("events")
+            .select("*")
+            .gte("date", new Date().toISOString())
+            .order("date", { ascending: true })
+            .limit(limit);
+            
+          if (standardError) {
+            console.error("Ultimate fallback query failed:", standardError);
+            return []; // Return empty instead of throwing to prevent breaking the UI
+          }
+          return standardData ?? [];
+        }
+        return fallbackData ?? [];
+      }
+      return data ?? [];
+    },
+    enabled: !!userId,
   });
 };
 

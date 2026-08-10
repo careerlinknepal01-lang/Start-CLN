@@ -80,6 +80,103 @@ export const useTrendingTopics = (fetchLimit: number = 5) => {
 };
 
 /**
+ * Hook to fetch AI-powered personalized trending topics from external news sources.
+ * Falls back to the internal hashtag-based trending topics if the new system is unavailable.
+ */
+export interface TrendingTopic {
+  id: string;
+  topic_name: string;
+  slug: string;
+  description: string;
+  category: string;
+  relevant_fields: string[];
+  trend_score: number;
+  article_count: number;
+  source_diversity: number;
+  first_seen_at: string;
+  last_updated_at: string;
+  personalized_score: number;
+}
+
+export const usePersonalizedTrendingTopics = (userId: string | undefined, limit: number = 5) => {
+  return useQuery({
+    queryKey: ["personalized_trending_topics", userId, limit],
+    queryFn: async () => {
+      if (!userId) return [];
+      const { data, error } = await supabase.rpc("get_personalized_trending_topics", {
+        p_user_id: userId,
+        p_limit: limit,
+      });
+      if (error) {
+        console.warn("Personalized trending topics unavailable, using fallback:", error);
+        // Fallback: return empty so the widget can use the old system
+        return [];
+      }
+      return (data ?? []) as TrendingTopic[];
+    },
+    enabled: !!userId,
+    staleTime: 5 * 60 * 1000, // 5 minutes — topics don't change that fast
+  });
+};
+
+export interface TopicDetail {
+  id: string;
+  topic_name: string;
+  slug: string;
+  description: string;
+  category: string;
+  relevant_fields: string[];
+  trend_score: number;
+  article_count: number;
+  source_diversity: number;
+  first_seen_at: string;
+  last_updated_at: string;
+}
+
+export interface TopicArticle {
+  id: string;
+  topic_id: string;
+  source_name: string;
+  article_title: string;
+  article_url: string;
+  article_published_at: string;
+  article_image_url: string;
+  article_description: string;
+}
+
+export const useTopicBySlug = (slug: string | undefined) => {
+  return useQuery({
+    queryKey: ["topic_detail", slug],
+    queryFn: async () => {
+      if (!slug) return null;
+      const { data, error } = await supabase.rpc("get_topic_by_slug", {
+        p_slug: slug,
+      });
+      if (error) throw error;
+      return (data?.[0] ?? null) as TopicDetail | null;
+    },
+    enabled: !!slug,
+  });
+};
+
+export const useTopicArticles = (topicId: string | undefined) => {
+  return useQuery({
+    queryKey: ["topic_articles", topicId],
+    queryFn: async () => {
+      if (!topicId) return [];
+      const { data, error } = await supabase
+        .from("trending_topic_articles")
+        .select("*")
+        .eq("topic_id", topicId)
+        .order("article_published_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as TopicArticle[];
+    },
+    enabled: !!topicId,
+  });
+};
+
+/**
  * Hook to author a new post on the feed.
  * 
  * @returns {object} A mutation object containing the `mutate` function to trigger creation.

@@ -77,8 +77,8 @@ export default function Feed() {
   // We abstract the right sidebar content into a variable to keep the main JSX return clean and readable
   const rightSidebarContent = (
     <div className="space-y-6">
-      <UpcomingEventsWidget />
-      <TrendingTopicsWidget />
+      <UpcomingEventsWidget userId={authenticatedUser?.id} />
+      <TrendingTopicsWidget userId={authenticatedUser?.id} userField={currentUserProfile?.field} />
       <div className="flex flex-wrap gap-x-4 gap-y-2 px-2 text-xs text-slate-400 font-medium">
         <Link to="/about" className="hover:underline">About</Link>
         <Link to="/privacy" className="hover:underline">Privacy</Link>

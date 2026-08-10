@@ -108,8 +108,9 @@ export default function EventDetail() {
   const year = eventDate.getFullYear();
   const time = eventDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   const going = event.event_attendees?.filter((a) => a.status === "going") ?? [];
-  const myRsvp = user ? going.find((a) => a.user_id === user.id) : undefined;
-  const isGoing = !!myRsvp;
+  const myRsvp = user ? event.event_attendees?.find((a) => a.user_id === user.id) : undefined;
+  const isGoing = myRsvp?.status === "going";
+  const isInterested = myRsvp?.status === "interested";
   const isPast = eventDate < new Date();
 
   return (
@@ -214,15 +215,20 @@ export default function EventDetail() {
             {/* Action buttons */}
             {!isPast && user && (
               <div className="flex gap-3 pt-2 border-t border-border">
-                {/* RSVP */}
+                {/* RSVP - Going */}
                 <Button
                   variant={isGoing ? "outline" : "default"}
-                  className={!isGoing ? "bg-rose-600 hover:bg-rose-700 flex-1" : "flex-1"}
+                  className={!isGoing && !isInterested ? "bg-rose-600 hover:bg-rose-700 flex-1" : "flex-1"}
                   disabled={rsvp.isPending}
                   onClick={() => {
                     if (!user) return;
                     rsvp.mutate(
-                      { eventId: event.id, userId: user.id, isGoing, attendeeId: myRsvp?.id },
+                      { 
+                        eventId: event.id, 
+                        userId: user.id, 
+                        status: isGoing ? "none" : "going", 
+                        attendeeId: myRsvp?.id 
+                      },
                       { onSuccess: () => loadEvent() }
                     );
                   }}
@@ -235,6 +241,30 @@ export default function EventDetail() {
                     <Calendar className="h-4 w-4 mr-2" />
                   )}
                   {isGoing ? "You're Going ✓" : "RSVP — Going"}
+                </Button>
+
+                {/* RSVP - Interested */}
+                <Button
+                  variant={isInterested ? "outline" : "secondary"}
+                  className="flex-1"
+                  disabled={rsvp.isPending}
+                  onClick={() => {
+                    if (!user) return;
+                    rsvp.mutate(
+                      { 
+                        eventId: event.id, 
+                        userId: user.id, 
+                        status: isInterested ? "none" : "interested", 
+                        attendeeId: myRsvp?.id 
+                      },
+                      { onSuccess: () => loadEvent() }
+                    );
+                  }}
+                >
+                  {isInterested ? (
+                    <CheckCircle2 className="h-4 w-4 mr-2 text-amber-500" />
+                  ) : null}
+                  {isInterested ? "Interested ✓" : "Interested"}
                 </Button>
               </div>
             )}

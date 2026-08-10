@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Calendar,
@@ -289,7 +289,7 @@ export default function Events() {
                         toggleRsvp.mutate({
                           eventId: event.id,
                           userId: user.id,
-                          isGoing,
+                          status: isGoing ? "none" : "going",
                           attendeeId: myRsvp?.id,
                         })
                       }

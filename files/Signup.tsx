@@ -8,7 +8,7 @@ import { AuthLayout } from "@/features/auth/components/AuthLayout";
 import { SignupForm } from "@/features/auth/components/SignupForm";
 
 const Signup = () => (
-  <AuthLayout
+  <AuthLayout 
     heading="Join your community."
     tagline="Create a profile, find peers, and take part in career-building conversations."
     footnote="Free for undergraduate students across Nepal."
