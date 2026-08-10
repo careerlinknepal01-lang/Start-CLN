@@ -4,75 +4,99 @@ import { supabase } from "@/integrations/supabase/client";
 import { mapAuthError } from "@/features/auth/utils/authErrorMapper";
 import { PENDING_VERIFICATION_EMAIL_KEY } from "@/features/auth/types/auth.types";
 
-interface AuthCtx {
+/**
+ * Interface defining the shape of the authentication context.
+ */
+interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
   signOut: () => Promise<void>;
 }
 
-const Ctx = createContext<AuthCtx>({
+// Default state while waiting for the initial auth check to complete
+const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
   loading: true,
   signOut: async () => {},
 });
 
+/**
+ * Provider component that wraps the application and exposes authentication state.
+ * 
+ * @param {object} props - The component props.
+ * @param {ReactNode} props.children - The child components to render.
+ * @returns {JSX.Element} The AuthContext provider wrapping its children.
+ */
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (localStorage.getItem("cln_mock_auth")) {
-      localStorage.removeItem("cln_mock_auth");
-    }
+    // mounted flag prevents state updates on unmounted components if the auth check takes too long
+    let isMounted = true;
 
-    let mounted = true;
-
-    const applySession = (nextSession: Session | null) => {
-      if (!mounted) return;
+    /**
+     * Helper to centralize setting the session and user state safely.
+     * @param {Session | null} nextSession - The new session object from Supabase.
+     */
+    const updateSessionState = (nextSession: Session | null) => {
+      if (!isMounted) return;
       setSession(nextSession);
       setUser(nextSession?.user ?? null);
-      setLoading(false);
+      setIsLoading(false);
     };
 
-    const { data: sub } = supabase.auth.onAuthStateChange((event, nextSession) => {
-      if (event === "SIGNED_OUT" || event === "TOKEN_REFRESHED" || event === "SIGNED_IN") {
-        applySession(nextSession);
-      } else {
-        applySession(nextSession);
-      }
+    // We subscribe to auth state changes (login, logout, token refresh) to keep the app synchronized
+    const { data: authSubscription } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      updateSessionState(nextSession);
 
+      // Clean up sensitive/temporary storage keys when the user explicitly signs out
       if (event === "SIGNED_OUT") {
         sessionStorage.removeItem(PENDING_VERIFICATION_EMAIL_KEY);
       }
     });
 
+    // We fetch the initial session manually because onAuthStateChange might not fire immediately on page load
     supabase.auth.getSession().then(({ data: { session: initialSession }, error }) => {
       if (error) {
         mapAuthError(error, "general");
       }
-      applySession(initialSession);
+      updateSessionState(initialSession);
     });
 
     return () => {
-      mounted = false;
-      sub.subscription.unsubscribe();
+      isMounted = false;
+      authSubscription.subscription.unsubscribe();
     };
   }, []);
 
+  /**
+   * securely logs out the current user and clears local auth state.
+   * 
+   * @returns {Promise<void>}
+   */
   const signOut = useCallback(async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
       mapAuthError(error, "general");
     }
+    // We clear pending verifications to prevent leaked state between accounts
     sessionStorage.removeItem(PENDING_VERIFICATION_EMAIL_KEY);
   }, []);
 
   return (
-    <Ctx.Provider value={{ user, session, loading, signOut }}>{children}</Ctx.Provider>
+    <AuthContext.Provider value={{ user, session, loading: isLoading, signOut }}>
+      {children}
+    </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(Ctx);
+/**
+ * Custom hook to easily consume the authentication context across the application.
+ * 
+ * @returns {AuthContextType} The current user, session, and loading state.
+ */
+export const useAuth = () => useContext(AuthContext);

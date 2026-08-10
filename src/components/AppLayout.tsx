@@ -18,10 +18,17 @@ import {
   ChevronRight,
   Sun,
   Moon,
+  Search,
+  Bookmark,
+  Users,
+  ShieldAlert,
 } from "lucide-react";
+import { VerifyStudentCard } from "./feed/VerifyStudentCard";
+import { Input } from "@/components/ui/input";
 import React, { ReactNode, useEffect, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
 import { supabase } from "@/integrations/supabase/client";
+import { useAdminAuth } from "@/features/admin/hooks/useAdminAuth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -65,8 +72,9 @@ const navGroups: NavItem[] = [
       { to: "/events", label: "Events", icon: Calendar },
       { to: "/messages", label: "Messages", icon: MessageSquare },
       { to: "/profile", label: "Profile", icon: UserIcon },
+      { to: "/saved-posts", label: "Saved", icon: Bookmark },
     ],
-  },
+  }
 ];
 
 const notifTypeIcon: Record<string, string> = {
@@ -101,16 +109,13 @@ function SidebarNavLink({
       onClick={onClick}
       className={cn(
         "group relative flex items-center gap-3 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        collapsed ? "justify-center h-10 w-10 mx-auto rounded-[4px]" : "px-3 py-2.5 rounded-[2px]",
+        collapsed ? "justify-center h-10 w-10 mx-auto rounded-xl" : "px-4 py-3 rounded-xl",
         isActive
           ? "bg-primary text-primary-foreground shadow-sm"
           : "text-muted-foreground hover:bg-secondary hover:text-foreground",
       )}
     >
-      {isActive && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 bg-accent rounded-r-full" />
-      )}
-      <item.icon className={cn("shrink-0", collapsed ? "h-5 w-5" : "h-4 w-4")} aria-hidden="true" />
+      <item.icon className={cn("shrink-0", collapsed ? "h-5 w-5" : "h-5 w-5")} aria-hidden="true" />
       {!collapsed && <span>{item.label}</span>}
     </NavLink>
   );
@@ -128,7 +133,7 @@ function NavSection({
   return (
     <div className="space-y-0.5">
       {!collapsed && (
-        <p className="px-3 pb-1 pt-2 text-[10px] font-semibold tracking-[0.15em] uppercase text-muted-foreground/50">
+        <p className="px-4 pb-2 pt-4 text-xs font-semibold tracking-wider uppercase text-muted-foreground/70">
           {group.section}
         </p>
       )}
@@ -151,9 +156,17 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
     return stored === "true";
   });
   const { theme, toggle: toggleTheme } = useTheme();
+  const { isAdmin } = useAdminAuth();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleGlobalSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+  };
 
   useEffect(() => {
-    try { localStorage.setItem("cln-sidebar-collapsed", String(sidebarCollapsed)); } catch {}
+    try { localStorage.setItem("cln-sidebar-collapsed", String(sidebarCollapsed)); } catch (e) { /* ignore */ }
   }, [sidebarCollapsed]);
 
   useEffect(() => {
@@ -223,24 +236,24 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
         <Link
           to="/feed"
           className={cn(
-            "flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-            opts?.collapsed ? "" : "rounded-[2px]",
+            "flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            opts?.collapsed ? "" : "rounded-xl",
           )}
           aria-label="CareerLink Nepal — go to feed"
           onClick={opts?.onNavClick}
         >
-          <img src="/cln.png" alt="" className="h-7 w-7 object-contain" aria-hidden="true" />
+          <img src="/cln.png" alt="" className="h-8 w-8 object-contain" aria-hidden="true" />
           {!opts?.collapsed && (
-            <span className="font-bold text-sm tracking-tight text-foreground">
-              CareerLink <span className="text-accent">Nepal</span>
+            <span className="font-bold text-lg tracking-tight text-foreground">
+              CareerLink <span className="text-[#f97316]">Nepal</span>
             </span>
           )}
         </Link>
       </div>
 
       {/* Navigation */}
-      <ScrollArea className="flex-1 py-3">
-        <nav className={cn("flex flex-col gap-4", opts?.collapsed ? "items-center px-2" : "px-3")}>
+      <ScrollArea className="flex-1 py-4">
+        <nav className={cn("flex flex-col gap-2", opts?.collapsed ? "items-center px-2" : "px-4")}>
           {navGroups.map((group) => (
             <NavSection
               key={group.section}
@@ -249,7 +262,18 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
               onClick={opts?.onNavClick}
             />
           ))}
+          {isAdmin && (
+            <NavSection
+              group={{
+                section: "Admin",
+                items: [{ to: "/admin", label: "Admin Panel", icon: ShieldAlert }]
+              }}
+              collapsed={opts?.collapsed}
+              onClick={opts?.onNavClick}
+            />
+          )}
         </nav>
+        {!opts?.collapsed && <VerifyStudentCard />}
       </ScrollArea>
 
       {/* User + Sign out */}
@@ -265,7 +289,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-[2px] text-muted-foreground hover:text-destructive"
+              className="h-8 w-8 rounded-xl text-muted-foreground hover:text-destructive"
               onClick={handleLogout}
               aria-label="Sign out"
             >
@@ -286,7 +310,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 shrink-0 rounded-[2px] text-muted-foreground hover:text-destructive"
+              className="h-8 w-8 shrink-0 rounded-xl text-muted-foreground hover:text-destructive"
               onClick={handleLogout}
               aria-label="Sign out"
             >
@@ -316,7 +340,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
       <div className="flex min-w-0 flex-1 flex-col max-md:overflow-visible md:overflow-hidden">
         {/* ── Topbar ─────────────────────────────────────────────── */}
         <header
-          className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur-md lg:px-6"
+          className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-background/95 px-4 backdrop-blur-md lg:px-6"
           role="banner"
         >
           {/* Left: toggle + mobile brand */}
@@ -325,7 +349,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
             <Button
               variant="ghost"
               size="icon"
-              className="hidden md:inline-flex h-8 w-8 rounded-[2px] text-muted-foreground hover:text-foreground"
+              className="hidden md:inline-flex h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground bg-secondary"
               onClick={() => setSidebarCollapsed((p) => !p)}
               aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
@@ -379,6 +403,20 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
             </div>
           </div>
 
+          {/* Center: Global Search Bar */}
+          <div className="hidden md:flex flex-1 max-w-2xl mx-8 items-center justify-center">
+            <form onSubmit={handleGlobalSearch} className="relative w-full max-w-xl">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" aria-hidden="true" />
+              <Input
+                type="search"
+                placeholder="Search students, posts, events..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-secondary border-none pl-12 h-11 rounded-full text-base focus-visible:ring-2 focus-visible:ring-primary/20 placeholder:text-muted-foreground"
+              />
+            </form>
+          </div>
+
           {/* Theme toggle + Notification bell */}
           <div className="flex items-center gap-1">
             <Button
@@ -402,7 +440,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="relative rounded-full focus-visible:ring-2 focus-visible:ring-ring"
+                  className="relative rounded-full h-10 w-10 bg-secondary text-foreground hover:bg-secondary/80 focus-visible:ring-2 focus-visible:ring-ring"
                   aria-label={unread > 0 ? `Notifications (${unread} unread)` : "Notifications"}
                 >
                   {unread > 0 ? (
@@ -473,12 +511,12 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
         </header>
 
         {/* ── Page content ───────────────────────────────────────── */}
-        <ScrollArea className="hidden md:block flex-1 bg-muted/20">
+        <ScrollArea className="hidden md:block flex-1 bg-background">
           <main className="container mx-auto max-w-7xl px-4 py-6 md:pb-6">
             {children}
           </main>
         </ScrollArea>
-        <div className="block md:hidden flex-1 bg-muted/20">
+        <div className="block md:hidden flex-1 bg-background">
           <main className="container mx-auto max-w-7xl px-4 py-6 md:pb-6">
             {children}
           </main>

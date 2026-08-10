@@ -6,8 +6,15 @@ import { useToggleCommunityMembership } from "@/hooks/usePlatform";
 import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { CreatePostCard } from "@/components/feed/CreatePostCard";
 import { PostCard } from "@/components/feed/PostCard";
 import { FeedSkeleton } from "@/components/feed/FeedSkeleton";
@@ -19,6 +26,12 @@ import {
   ShieldCheck,
   Globe,
   Lock,
+  Search,
+  Calendar,
+  Info,
+  Settings,
+  MoreVertical,
+  Crown
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { pluralize } from "@/lib/pluralize";
@@ -57,6 +70,7 @@ export default function CommunityDetail() {
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [postsLoading, setPostsLoading] = useState(false);
+  const [memberSearch, setMemberSearch] = useState("");
   const [me, setMe] = useState<{ id: string; name: string; avatar_url: string | null } | null>(null);
 
   const loadCommunity = useCallback(async () => {
@@ -240,25 +254,35 @@ export default function CommunityDetail() {
               </div>
             </div>
 
-            <div className="shrink-0">
-              {community.creator_id === user?.id ? (
-                <Button variant="outline" disabled>You are the admin</Button>
-              ) : (
-                <Button
-                  variant={isMember ? "outline" : "default"}
-                  className={!isMember ? "bg-blue-600 hover:bg-blue-700" : ""}
-                  disabled={!user || toggleMembership.isPending}
-                  onClick={() => {
-                    if (!user) return;
-                    toggleMembership.mutate(
-                      { communityId: community.id, userId: user.id, isMember, memberId: myMember?.id },
-                      { onSuccess: () => loadCommunity() }
-                    );
-                  }}
-                >
-                  {toggleMembership.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                  {isMember ? "Leave Community" : "Join Community"}
-                </Button>
+            <div className="shrink-0 flex items-center gap-2">
+              <Button
+                variant={isMember ? "outline" : "default"}
+                className={!isMember ? "bg-blue-600 hover:bg-blue-700" : ""}
+                disabled={!user || toggleMembership.isPending}
+                onClick={() => {
+                  if (!user) return;
+                  toggleMembership.mutate(
+                    { communityId: community.id, userId: user.id, isMember, memberId: myMember?.id },
+                    { onSuccess: () => loadCommunity() }
+                  );
+                }}
+              >
+                {toggleMembership.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                {isMember ? "Leave Community" : "Join Community"}
+              </Button>
+
+              {isAdmin && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="icon">
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => toast.info("Coming soon")}>Edit Community</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => toast.info("Coming soon")}>Manage Members</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
             </div>
           </div>
@@ -271,11 +295,13 @@ export default function CommunityDetail() {
 
       {/* Tabs */}
       <Tabs defaultValue="feed">
-        <TabsList className="w-full h-11 bg-card border border-border rounded-xl">
-          <TabsTrigger value="feed" className="flex-1">Community Feed</TabsTrigger>
-          <TabsTrigger value="members" className="flex-1">
-            Members <Badge variant="secondary" className="ml-2 text-[10px]">{memberCount}</Badge>
+        <TabsList className="w-full h-11 bg-card border border-border rounded-xl flex overflow-x-auto scrollbar-none">
+          <TabsTrigger value="feed" className="flex-1 whitespace-nowrap"><Globe className="h-4 w-4 mr-2" /> Posts</TabsTrigger>
+          <TabsTrigger value="about" className="flex-1 whitespace-nowrap"><Info className="h-4 w-4 mr-2" /> About</TabsTrigger>
+          <TabsTrigger value="members" className="flex-1 whitespace-nowrap">
+            <Users className="h-4 w-4 mr-2" /> Members <Badge variant="secondary" className="ml-2 text-[10px]">{memberCount}</Badge>
           </TabsTrigger>
+          <TabsTrigger value="events" className="flex-1 whitespace-nowrap"><Calendar className="h-4 w-4 mr-2" /> Events</TabsTrigger>
         </TabsList>
 
         {/* Feed Tab */}
@@ -312,19 +338,65 @@ export default function CommunityDetail() {
                 currentUserId={user?.id ?? ""}
                 currentUserName={me?.name ?? ""}
                 currentAvatarUrl={me?.avatar_url ?? null}
+                isCommunityAdmin={isAdmin}
               />
             ))
           )}
         </TabsContent>
 
+        {/* About Tab */}
+        <TabsContent value="about" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">About this community</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div>
+                <h3 className="font-medium text-sm text-muted-foreground mb-2">Description</h3>
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">{community.description}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/50">
+                <div>
+                  <h3 className="font-medium text-xs text-muted-foreground mb-1">Category</h3>
+                  <Badge variant="secondary">{community.category}</Badge>
+                </div>
+                <div>
+                  <h3 className="font-medium text-xs text-muted-foreground mb-1">Created</h3>
+                  <p className="text-sm">{new Date(community.created_at).toLocaleDateString()}</p>
+                </div>
+                {community.creator && (
+                  <div className="col-span-2 pt-2">
+                    <h3 className="font-medium text-xs text-muted-foreground mb-2">Community Creator</h3>
+                    <Link to={`/profile/${community.creator_id}`} className="flex items-center gap-3">
+                      <UserAvatar name={community.creator.name} url={community.creator.avatar_url} className="h-8 w-8" />
+                      <span className="text-sm font-medium hover:underline">{community.creator.name}</span>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         {/* Members Tab */}
-        <TabsContent value="members" className="mt-4">
+        <TabsContent value="members" className="mt-4 space-y-4">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search members..."
+              value={memberSearch}
+              onChange={(e) => setMemberSearch(e.target.value)}
+              className="pl-9 bg-card"
+            />
+          </div>
           <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-            {members.map((m) => (
+            {members
+              .filter(m => m.profile?.name?.toLowerCase().includes(memberSearch.toLowerCase()))
+              .map((m) => (
               <Link
                 key={m.id}
                 to={`/profile/${m.user_id}`}
-                className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/40 hover:shadow-sm transition-all"
+                className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/40 hover:shadow-sm transition-all relative overflow-hidden group"
               >
                 <UserAvatar
                   name={m.profile?.name ?? "Member"}
@@ -334,17 +406,43 @@ export default function CommunityDetail() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
                     <span className="font-medium text-sm truncate">{m.profile?.name ?? "Member"}</span>
-                    {(m.role === "admin" || m.user_id === community.creator_id) && (
-                      <ShieldCheck className="h-3.5 w-3.5 text-blue-500 shrink-0" />
-                    )}
                   </div>
                   {m.profile?.field && (
                     <span className="text-xs text-muted-foreground truncate block">{m.profile.field}</span>
                   )}
                 </div>
+                {m.role === "creator" || m.user_id === community.creator_id ? (
+                  <Badge variant="secondary" className="absolute top-2 right-2 text-[9px] bg-amber-100 text-amber-800 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-200 border-none gap-1 px-1.5 py-0">
+                    <Crown className="h-2.5 w-2.5" /> Owner
+                  </Badge>
+                ) : m.role === "admin" ? (
+                  <Badge variant="secondary" className="absolute top-2 right-2 text-[9px] bg-blue-100 text-blue-800 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-200 border-none gap-1 px-1.5 py-0">
+                    <ShieldCheck className="h-2.5 w-2.5" /> Admin
+                  </Badge>
+                ) : null}
               </Link>
             ))}
           </div>
+        </TabsContent>
+
+        {/* Events Tab */}
+        <TabsContent value="events" className="mt-4">
+          <Card className="border-dashed">
+            <CardContent className="p-12 text-center flex flex-col items-center justify-center space-y-3">
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-semibold">Community Events</h3>
+              <p className="text-sm text-muted-foreground max-w-sm">
+                Events for this community will appear here. Admins can schedule events for members to attend.
+              </p>
+              {isAdmin && (
+                <Button className="mt-2" onClick={() => navigate("/events?create=true&community=" + community.id)}>
+                  Schedule Event
+                </Button>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

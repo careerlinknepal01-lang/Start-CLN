@@ -18,6 +18,7 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./hooks/useAuth";
 import { ProtectedRoute } from "@/features/auth/components/ProtectedRoute";
+import { AdminProtectedRoute } from "@/features/admin/components/AdminProtectedRoute";
 
 const Feed = lazy(() => import("./pages/Feed"));
 const PostDetail = lazy(() => import("./pages/PostDetail"));
@@ -32,6 +33,26 @@ const About = lazy(() => import("./pages/About"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Contact = lazy(() => import("./pages/Contact"));
+
+const StudyPartners = lazy(() => import("./pages/StudyPartners"));
+const StudyPartnerDetail = lazy(() => import("./pages/StudyPartnerDetail"));
+const StudyPartnerForm = lazy(() => import("./pages/StudyPartnerForm"));
+const SavedPosts = lazy(() => import("./pages/SavedPosts"));
+const Search = lazy(() => import("./pages/Search"));
+
+// Admin
+const AdminLayout = lazy(() => import("./features/admin/components/AdminLayout"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminPosts = lazy(() => import("./pages/admin/AdminPosts"));
+const AdminCommunities = lazy(() => import("./pages/admin/AdminCommunities"));
+const AdminReports = lazy(() => import("./pages/admin/AdminReports"));
+const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
+const AdminProjects = lazy(() => import("./pages/admin/AdminProjects"));
+const AdminOpportunities = lazy(() => import("./pages/admin/AdminOpportunities"));
+const AdminEvents = lazy(() => import("./pages/admin/AdminEvents"));
+const AdminQA = lazy(() => import("./pages/admin/AdminQA"));
+const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
 
 const PageLoader = () => (
   <div
@@ -94,10 +115,34 @@ const App = () => (
                 <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
                 <Route path="/events/:id" element={<ProtectedRoute><EventDetail /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                
+                <Route path="/study-partners" element={<ProtectedRoute><StudyPartners /></ProtectedRoute>} />
+                <Route path="/study-partners/create" element={<ProtectedRoute><StudyPartnerForm /></ProtectedRoute>} />
+                <Route path="/study-partners/edit" element={<ProtectedRoute><StudyPartnerForm /></ProtectedRoute>} />
+                <Route path="/study-partners/:id" element={<ProtectedRoute><StudyPartnerDetail /></ProtectedRoute>} />
+                <Route path="/saved-posts" element={<ProtectedRoute><SavedPosts /></ProtectedRoute>} />
+                <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
+
                 <Route path="/about" element={<About />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/contact" element={<Contact />} />
+
+                {/* Admin Panel */}
+                <Route path="/admin" element={<AdminProtectedRoute><AdminLayout /></AdminProtectedRoute>}>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="users" element={<AdminUsers />} />
+                  <Route path="posts" element={<AdminPosts />} />
+                  <Route path="communities" element={<AdminCommunities />} />
+                  <Route path="reports" element={<AdminReports />} />
+                  <Route path="analytics" element={<AdminAnalytics />} />
+                  <Route path="projects" element={<AdminProjects />} />
+                  <Route path="opportunities" element={<AdminOpportunities />} />
+                  <Route path="events" element={<AdminEvents />} />
+                  <Route path="qa" element={<AdminQA />} />
+                  <Route path="settings" element={<AdminSettings />} />
+                </Route>
+
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

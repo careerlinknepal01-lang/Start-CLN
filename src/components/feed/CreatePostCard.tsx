@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, ChevronUp, Image, Loader2, X } from "lucide-react";
+import { Image, Loader2, X, Calendar, Trophy, Briefcase, Send } from "lucide-react";
 
 import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
@@ -8,51 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreatePost } from "@/hooks/useFeed";
 import type { FeedPost } from "@/hooks/useFeed";
-
-type UiPostType = FeedPost["type"] | "teammates" | "collab";
-
-const POST_TYPES: { type: UiPostType; label: string; tone: string }[] = [
-  {
-    type: "general",
-    label: "General",
-    tone: "hover:bg-purple-500/10 data-[active=true]:bg-purple-500/15 data-[active=true]:text-purple-700 data-[active=true]:border-purple-500/40",
-  },
-  {
-    type: "teammates",
-    label: "Looking for teammates",
-    tone: "hover:bg-emerald-500/10 data-[active=true]:bg-emerald-500/15 data-[active=true]:text-emerald-700 data-[active=true]:border-emerald-500/40",
-  },
-  {
-    type: "collab",
-    label: "Project collab request",
-    tone: "hover:bg-blue-500/10 data-[active=true]:bg-blue-500/15 data-[active=true]:text-blue-700 data-[active=true]:border-blue-500/40",
-  },
-  {
-    type: "achievement",
-    label: "Achievement",
-    tone: "hover:bg-amber-500/10 data-[active=true]:bg-amber-500/15 data-[active=true]:text-amber-700 data-[active=true]:border-amber-500/40",
-  },
-  {
-    type: "opportunity",
-    label: "Opportunity",
-    tone: "hover:bg-indigo-500/10 data-[active=true]:bg-indigo-500/15 data-[active=true]:text-indigo-700 data-[active=true]:border-indigo-500/40",
-  },
-  {
-    type: "question",
-    label: "Question",
-    tone: "hover:bg-rose-500/10 data-[active=true]:bg-rose-500/15 data-[active=true]:text-rose-700 data-[active=true]:border-rose-500/40",
-  },
-];
-
-const PLACEHOLDERS: Record<UiPostType, string> = {
-  general: "What's on your mind?",
-  teammates: "What kind of teammates are you looking for?",
-  collab: "Describe the project you want to collaborate on.",
-  achievement: "Share a recent achievement - big or small, they all count.",
-  project_update: "What's new with your project? Share your progress.",
-  opportunity: "Know of an opportunity? Share it with the community.",
-  question: "Got a question? The community is here to help.",
-};
+import { useNavigate } from "react-router-dom";
 
 interface CreatePostCardProps {
   userId: string;
@@ -71,9 +27,10 @@ export const CreatePostCard = ({
   communityId = null,
   onPostCreated,
 }: CreatePostCardProps) => {
+  const navigate = useNavigate();
   const [expanded, setExpanded] = useState(defaultOpen);
   const [content, setContent] = useState("");
-  const [type, setType] = useState<UiPostType>("general");
+  const [type, setType] = useState<FeedPost["type"]>("general");
   const [mediaUrl, setMediaUrl] = useState("");
   const [showMedia, setShowMedia] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -91,32 +48,29 @@ export const CreatePostCard = ({
     setType("general");
   };
 
-  const handleExpand = () => {
+  const handleExpand = (selectedType: FeedPost["type"] = "general") => {
+    setType(selectedType);
     setExpanded(true);
     window.setTimeout(() => textareaRef.current?.focus(), 50);
+  };
+
+  const handleEventClick = () => {
+    // Instead of posting, redirecting to Events to create one is often a better UX,
+    // but the prompt says "Where represented by the design, support... Events". 
+    // We'll map "Event" to an opportunity post with #Event tag, or navigate.
+    // Let's create an opportunity post prefilled with #Event.
+    setContent("#Event ");
+    handleExpand("opportunity");
   };
 
   const handleSubmit = () => {
     if (!content.trim()) return;
 
-    let dbType: FeedPost["type"] = "general";
-    let actualContent = content.trim();
-
-    if (type === "teammates") {
-      dbType = "opportunity";
-      actualContent = `#LookingForTeammates\n\n${actualContent}`;
-    } else if (type === "collab") {
-      dbType = "project_update";
-      actualContent = `#CollabRequest\n\n${actualContent}`;
-    } else {
-      dbType = type as FeedPost["type"];
-    }
-
     createPost(
       {
         author_id: userId,
-        type: dbType,
-        content: actualContent,
+        type: type,
+        content: content.trim(),
         media_url: mediaUrl.trim() || null,
         community_id: communityId,
       },
@@ -135,136 +89,151 @@ export const CreatePostCard = ({
   const canSubmit = content.trim().length > 0 && !isOverLimit && !isPending;
 
   return (
-    <Card className="border-border/60 shadow-sm transition-shadow hover:shadow-md">
-      <CardContent className="p-4">
-        <div className="flex items-center gap-3">
+    <Card className="border-border bg-card text-card-foreground shadow-soft overflow-hidden mb-6 rounded-2xl">
+      <CardContent className="p-0">
+        <div className="p-4 flex items-start gap-3">
           <UserAvatar name={userName} url={avatarUrl} className="h-10 w-10 shrink-0" />
-          {!expanded ? (
-            <button
-              type="button"
-              onClick={handleExpand}
-              className="min-h-12 flex-1 rounded-full border border-border bg-muted/50 px-4 py-2.5 text-left text-base text-muted-foreground transition hover:border-primary/30 hover:bg-muted"
-            >
-              Share an update, ask a question...
-            </button>
-          ) : (
-            <div className="flex-1 text-sm font-medium text-foreground">
-              Creating a post
-            </div>
-          )}
-        </div>
-
-        {expanded ? (
-          <div className="mt-4 space-y-4">
-            <div className="flex flex-wrap gap-1.5">
-              {POST_TYPES.map(({ type: postType, label, tone }) => (
-                <button
-                  key={postType}
-                  type="button"
-                  data-active={type === postType}
-                  onClick={() => setType(postType)}
-                  className={`min-h-10 rounded-full border border-transparent px-3 py-1 text-xs font-medium transition ${tone}`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            <div className="relative">
-              <Textarea
-                ref={textareaRef}
-                value={content}
-                onChange={(event) => setContent(event.target.value)}
-                placeholder={PLACEHOLDERS[type]}
-                className="min-h-[120px] resize-none border-border/60 pr-16 text-base leading-relaxed focus:border-primary/50"
-                disabled={isPending}
-                aria-label="Post content"
-              />
-              <span
-                className={`absolute bottom-2.5 right-3 text-xs tabular-nums ${
-                  isOverLimit
-                    ? "font-semibold text-destructive"
-                    : charCount > maxChars * 0.85
-                      ? "text-amber-600"
-                      : "text-muted-foreground"
-                }`}
+          
+          <div className="flex-1 flex flex-col">
+            {!expanded ? (
+              <div 
+                className="w-full flex items-center h-12 px-4 rounded-xl bg-secondary/50 text-muted-foreground text-[15px] cursor-text transition-colors border-none"
+                onClick={() => handleExpand("general")}
               >
-                {charCount}/{maxChars}
-              </span>
-            </div>
-
-            {showMedia ? (
-              <div className="flex items-center gap-2">
-                <Input
-                  value={mediaUrl}
-                  onChange={(event) => setMediaUrl(event.target.value)}
-                  placeholder="Paste image URL (https://...)"
-                  className="min-h-11 border-border/60 text-base"
+                What's on your mind, {userName.split(' ')[0]}?
+              </div>
+            ) : (
+              <div className="relative w-full">
+                <Textarea
+                  ref={textareaRef}
+                  value={content}
+                  onChange={(event) => setContent(event.target.value)}
+                  placeholder={`What's on your mind, ${userName.split(' ')[0]}?`}
+                  className="min-h-[100px] resize-none border-none bg-transparent shadow-none focus-visible:ring-0 px-0 py-2 text-[15px] text-foreground placeholder:text-muted-foreground"
                   disabled={isPending}
                 />
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => {
-                    setShowMedia(false);
-                    setMediaUrl("");
-                  }}
-                  className="h-11 w-11 shrink-0"
-                  aria-label="Remove media URL"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+                
+                {showMedia && (
+                  <div className="mt-2 mb-4 animate-in fade-in slide-in-from-top-2">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Input
+                        value={mediaUrl}
+                        onChange={(event) => setMediaUrl(event.target.value)}
+                        placeholder="Paste image URL (https://...)"
+                        className="h-9 text-sm bg-muted/50"
+                        disabled={isPending}
+                      />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setShowMedia(false);
+                          setMediaUrl("");
+                        }}
+                        className="h-9 w-9 shrink-0 text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {mediaUrl && (
+                      <div className="aspect-video overflow-hidden rounded-lg border bg-muted/30">
+                        <img
+                          src={mediaUrl}
+                          alt="Preview"
+                          className="h-full w-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
-            ) : null}
+            )}
+          </div>
+        </div>
 
-            {mediaUrl ? (
-              <div className="aspect-video overflow-hidden rounded-lg border border-border/60 bg-muted">
-                <img
-                  src={mediaUrl}
-                  alt="Post media preview"
-                  className="h-full w-full object-cover"
-                  onError={(event) => {
-                    event.currentTarget.style.display = "none";
-                  }}
-                />
-              </div>
-            ) : null}
+        {/* Action Buttons Row */}
+        <div className="flex items-center justify-between px-4 pb-4 pt-2">
+          <div className="flex flex-wrap gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                if (!expanded) handleExpand("general");
+                setShowMedia(true);
+              }}
+              className="h-10 px-4 rounded-xl border-border text-muted-foreground hover:text-foreground hover:bg-secondary text-sm font-medium shadow-none"
+              disabled={isPending}
+            >
+              <Image className="mr-2 h-4 w-4 text-orange-500" />
+              Image
+            </Button>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleEventClick}
+              className="h-10 px-4 rounded-xl border-border text-muted-foreground hover:text-foreground hover:bg-secondary text-sm font-medium shadow-none"
+              disabled={isPending}
+            >
+              <Calendar className="mr-2 h-4 w-4 text-purple-500" />
+              Event
+            </Button>
 
-            <div className="flex items-center justify-between gap-3 pt-1">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleExpand("achievement")}
+              className="h-10 px-4 rounded-xl border-border text-muted-foreground hover:text-foreground hover:bg-secondary text-sm font-medium shadow-none"
+              disabled={isPending}
+            >
+              <Trophy className="mr-2 h-4 w-4 text-green-500" />
+              Achievement
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleExpand("project_update")}
+              className="h-10 px-4 rounded-xl border-border text-muted-foreground hover:text-foreground hover:bg-secondary text-sm font-medium shadow-none"
+              disabled={isPending}
+            >
+              <Briefcase className="mr-2 h-4 w-4 text-blue-500" />
+              Project
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {expanded && (
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setShowMedia(!showMedia)}
-                className="min-h-10 gap-1.5 text-muted-foreground hover:text-foreground"
+                onClick={reset}
+                className="h-9 text-xs font-medium"
                 disabled={isPending}
               >
-                <Image className="h-4 w-4" />
-                {showMedia ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                Photo
+                Cancel
               </Button>
-
-              <div className="flex gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={reset}
-                  disabled={isPending}
-                  className="min-h-10"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={handleSubmit}
-                  disabled={!canSubmit}
-                  className="min-h-10 min-w-24"
-                >
-                  {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Post"}
-                </Button>
-              </div>
-            </div>
+            )}
+            <Button
+              size="sm"
+              onClick={handleSubmit}
+              disabled={!canSubmit && expanded}
+              className={`h-10 px-6 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-semibold shadow-none transition-all ${
+                expanded ? "" : "opacity-0 pointer-events-none w-0 px-0 overflow-hidden"
+              }`}
+            >
+              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : (
+                <>
+                  <Send className="mr-2 h-4 w-4" />
+                  Post
+                </>
+              )}
+            </Button>
           </div>
-        ) : null}
+        </div>
       </CardContent>
     </Card>
   );

@@ -62,6 +62,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
+import { resolveProfileViewContext } from "@/lib/profileView";
 import {
   fetchMyConnections,
   fetchPendingIncomingRequests,
@@ -530,9 +531,7 @@ const ProfileEditor = ({
 const ProfilePage = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
-  const currentUserId = user?.id;
-  const targetId = id || currentUserId || "";
-  const isOwn = Boolean(currentUserId && targetId === currentUserId);
+  const { viewerId: currentUserId, targetId, isOwn } = resolveProfileViewContext(user?.id, id);
 
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [connections, setConnections] = useState<ConnRow[]>([]);
@@ -557,7 +556,7 @@ const ProfilePage = () => {
     try {
       const { data } = await supabase
         .rpc("get_feed_posts", {
-          p_user_id: currentUserId || targetId,
+          p_user_id: currentUserId,
           p_filter: "recent",
           p_limit: 20,
           p_offset: 0,

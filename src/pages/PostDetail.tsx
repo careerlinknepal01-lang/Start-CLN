@@ -6,8 +6,23 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { QueryError } from "@/components/QueryStatus";
 import type { FeedPost } from "@/hooks/useFeed";
+import type { Tables } from "@/integrations/supabase/types";
 import { AppLayout } from "@/components/AppLayout";
+
+type PostDetailRow = Tables<"feed_posts"> & {
+  is_pinned?: boolean | null;
+  profiles: {
+    name: string | null;
+    avatar_url: string | null;
+    field: string | null;
+    college: string | null;
+    is_verified: boolean | null;
+  } | null;
+  feed_post_likes: Array<{ user_id: string }>;
+  feed_post_bookmarks: Array<{ user_id: string }>;
+};
 
 const PostDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,6 +30,7 @@ const PostDetail = () => {
   const navigate = useNavigate();
   const [post, setPost] = useState<FeedPost | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id || !user) return;
@@ -23,55 +39,56 @@ const PostDetail = () => {
 
     const fetchPost = async () => {
       setLoading(true);
-      const { data, error } = await supabase.rpc("get_feed_posts", {
-        p_user_id: user.id,
-        p_filter: "recent",
-        p_limit: 1,
-        p_offset: 0,
-      });
-
-      // get_feed_posts doesn't easily support querying by post_id via RPC directly without a wrapper
-      // Let's do a direct query for the single post for now
-      // Actually we'd need to compute user_liked etc.
-      // Easiest is to use get_feed_posts but it doesn't filter by id.
-      // So we'll fetch from db and manually structure. Or get all recent and find it.
-      // For simplicity, we just fetch from feed and find it, or write a custom query.
+      setLoadError(null);
       
       const { data: rawPost, error: rawError } = await supabase
-        .from("posts")
+        .from("feed_posts")
         .select(`
           *,
-          profiles:author_id(id, name, avatar_url, field, college),
-          likes(user_id)
+          profiles:author_id(id, name, avatar_url, field, college, is_verified),
+          feed_post_likes(user_id),
+          feed_post_bookmarks(user_id)
         `)
         .eq("id", id)
-        .single();
+        .maybeSingle();
 
       if (rawError || !rawPost) {
         if (isMounted) {
           setLoading(false);
           setPost(null);
+          if (rawError && rawError.code !== "PGRST116") setLoadError(rawError.message);
         }
         return;
       }
 
-      const postLikes = rawPost.likes || [];
-      const userLiked = postLikes.some((like: any) => like.user_id === user.id);
+      const detailPost = rawPost as PostDetailRow;
+      const postLikes = detailPost.feed_post_likes ?? [];
+      const userLiked = postLikes.some((like) => like.user_id === user.id);
+      const userBookmarked = (detailPost.feed_post_bookmarks ?? []).some(
+        (bookmark) => bookmark.user_id === user.id
+      );
 
       // We need comment count
       const { count: commentCount } = await supabase
-        .from("comments")
+        .from("feed_post_comments")
         .select("id", { count: "exact" })
         .eq("post_id", id);
 
       if (isMounted) {
-        document.title = `${(rawPost.profiles as any)?.name}'s Post - CareerLink Nepal`;
+        document.title = `${detailPost.profiles?.name ?? "Student"}'s Post - CareerLink Nepal`;
         setPost({
-          ...rawPost,
-          author_name: (rawPost.profiles as any)?.name || "Unknown",
-          author_avatar_url: (rawPost.profiles as any)?.avatar_url || null,
+          ...detailPost,
+          author_name: detailPost.profiles?.name || "Unknown",
+          author_avatar_url: detailPost.profiles?.avatar_url || null,
+          author_field: detailPost.profiles?.field || "",
+          author_college: detailPost.profiles?.college || "",
+          author_is_verified: detailPost.profiles?.is_verified ?? false,
+          is_pinned: detailPost.is_pinned ?? false,
+          like_count: postLikes.length,
           user_liked: userLiked,
+          user_bookmarked: userBookmarked,
           comment_count: commentCount || 0,
+          feed_score: 0,
         } as FeedPost);
         setLoading(false);
       }
@@ -94,6 +111,8 @@ const PostDetail = () => {
           
           {loading ? (
             <FeedSkeleton />
+          ) : loadError ? (
+            <QueryError message={loadError} onRetry={() => navigate(0)} />
           ) : post ? (
             <PostCard
               post={post}

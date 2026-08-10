@@ -27,8 +27,13 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useAdminAuth } from "@/features/admin/hooks/useAdminAuth";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 /* ── Data ────────────────────────────────────────────────────────────────── */
+
+const cyclingWords = ["network", "community", "opportunity", "career"];
 
 const stats = [
   { label: "Active Students", value: "2500", icon: Users },
@@ -273,13 +278,13 @@ function AnimatedStatCard({ item, index }: { item: typeof stats[0]; index: numbe
 
 const Landing = () => {
   const { user } = useAuth();
+  const { isAdmin, isLoading: isAdminLoading } = useAdminAuth();
+  const navigate = useNavigate();
   const primaryHref = user ? "/feed" : "/signup";
   const progress = useScrollProgress();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeWord, setActiveWord] = useState(0);
-
-  const cyclingWords = ["network", "community", "opportunity", "career"];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -378,9 +383,21 @@ const Landing = () => {
             </a>
             <div className={`w-px h-4 mx-3 ${scrolled ? "bg-border" : "bg-primary-foreground/20"}`} />
             {user ? (
-              <Button asChild size="sm" style={{ borderRadius: "4px" }} className="bg-accent text-accent-foreground hover:bg-accent/90 text-xs font-semibold tracking-wide uppercase px-4 h-8 shadow-sm">
-                <Link to="/feed">Open app</Link>
-              </Button>
+              <div className="flex items-center gap-2">
+                {!isAdminLoading && isAdmin && (
+                  <Button asChild
+                    variant="outline" 
+                    size="sm" 
+                    style={{ borderRadius: "4px" }} 
+                    className={`text-xs font-semibold tracking-wide uppercase px-3 h-8 ${scrolled ? "text-muted-foreground hover:text-foreground border-border/50" : "text-primary-foreground/70 hover:text-primary-foreground border-primary-foreground/20"}`}
+                  >
+                    <Link to="/admin">Admin Panel</Link>
+                  </Button>
+                )}
+                <Button asChild size="sm" style={{ borderRadius: "4px" }} className="bg-accent text-accent-foreground hover:bg-accent/90 text-xs font-semibold tracking-wide uppercase px-4 h-8 shadow-sm">
+                  <Link to="/feed">Open app</Link>
+                </Button>
+              </div>
             ) : (
               <>
                 <Button asChild variant="ghost" size="sm" style={{ borderRadius: "4px" }} className={`text-xs font-semibold tracking-wide uppercase px-3 h-8 ${scrolled ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/70 hover:text-primary-foreground"}`}>
@@ -465,9 +482,21 @@ const Landing = () => {
               </p>
               <div className="flex flex-col gap-3">
                 {user ? (
-                  <Button asChild style={{ borderRadius: "4px" }} className="w-full bg-accent text-accent-foreground hover:bg-accent/90 text-sm font-semibold h-11">
-                    <Link to="/feed" onClick={() => setMobileMenuOpen(false)}>Open app</Link>
-                  </Button>
+                  <div className="flex flex-col gap-3">
+                    {!isAdminLoading && isAdmin && (
+                      <Button asChild
+                        variant="outline" 
+                        style={{ borderRadius: "4px" }} 
+                        className="w-full text-sm font-semibold h-11"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Link to="/admin">Admin Panel</Link>
+                      </Button>
+                    )}
+                    <Button asChild style={{ borderRadius: "4px" }} className="w-full bg-accent text-accent-foreground hover:bg-accent/90 text-sm font-semibold h-11">
+                      <Link to="/feed" onClick={() => setMobileMenuOpen(false)}>Open app</Link>
+                    </Button>
+                  </div>
                 ) : (
                   <>
                     <Button asChild style={{ borderRadius: "4px" }} className="w-full bg-accent text-accent-foreground hover:bg-accent/90 text-sm font-semibold h-11 shadow-sm">

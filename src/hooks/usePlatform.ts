@@ -46,7 +46,7 @@ export const useToggleEventRsvp = () => {
         { event_id: eventId, user_id: userId, status: "going" },
         { onConflict: "event_id,user_id" }
       );
-      if (error) throw error;
+      if (error) throw error; 
     },
     onMutate: async ({ eventId, userId, isGoing }) => {
       await qc.cancelQueries({ queryKey: ["events"] });
@@ -78,7 +78,18 @@ export const useToggleEventRsvp = () => {
   });
 };
 
-
+export const useUpcomingEvents = (limit: number = 3) => {
+  return useQuery({
+    queryKey: ["upcoming_events", limit],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_upcoming_events", {
+        p_limit: limit,
+      });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+};
 
 // ─── Communities ────────────────────────────────────────────────
 

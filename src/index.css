@@ -10,8 +10,8 @@
 
 @layer base {
   :root {
-    /* Nepal-inspired palette: deep blue + orange */
-    --background: 0 0% 100%;
+    /* Reference Design Theme: High contrast navy on slate */
+    --background: 210 40% 98%; /* slate-50 */
     --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
@@ -20,49 +20,48 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 220 70% 22%;
-    /* deep Nepal blue */
+    --primary: 224 64% 33%; /* Deep navy blue, close to #1e3a8a */
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 220 75% 38%;
+    --primary-glow: 224 64% 25%;
 
-    --secondary: 220 30% 96%;
-    --secondary-foreground: 220 70% 22%;
+    --secondary: 210 40% 96.1%; /* slate-100 */
+    --secondary-foreground: 224 64% 33%;
 
-    --muted: 220 20% 96%;
-    --muted-foreground: 220 15% 45%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%; /* slate-500 */
 
-    --accent: 22 95% 55%;
-    /* Nepal orange */
-    --accent-foreground: 0 0% 100%;
-    --accent-glow: 18 95% 62%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 224 64% 33%;
+    --accent-glow: 224 64% 33%;
 
-    --destructive: 0 75% 50%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
     --success: 142 70% 38%;
     --success-foreground: 0 0% 100%;
 
-    --border: 220 20% 90%;
-    --input: 220 20% 90%;
-    --ring: 220 70% 22%;
+    --border: 214.3 31.8% 91.4%; /* slate-200 */
+    --input: 214.3 31.8% 91.4%;
+    --ring: 224 64% 33%;
 
-    --radius: 0.75rem;
+    --radius: 1rem; /* 16px */
 
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
     --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-glow)) 60%, hsl(var(--accent)) 100%);
-    --shadow-soft: 0 4px 14px -4px hsl(var(--primary) / 0.15);
-    --shadow-elegant: 0 20px 50px -20px hsl(var(--primary) / 0.35);
+    
+    --shadow-soft: 0 2px 8px -2px rgba(15, 23, 42, 0.05);
+    --shadow-elegant: 0 10px 30px -10px rgba(15, 23, 42, 0.1);
     --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 224 64% 33%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96.1%;
+    --sidebar-accent-foreground: 224 64% 33%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-ring: 224 64% 33%;
   }
 
   .dark {
@@ -177,27 +176,12 @@
     --shadow-elegant: 0 20px 50px -20px hsl(var(--primary) / 0.35);
   }
 
-  /* Smooth theme transition — no snap when toggling dark/light */
+  /* Theme transition via view-transitions (handled in JS) */
   :root {
     color-scheme: light;
   }
   :root.dark {
     color-scheme: dark;
-  }
-  /* Smooth theme transition — fires only when .dark class toggles */
-  :root,
-  :root *,
-  :root *::before,
-  :root *::after {
-    transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    :root,
-    :root *,
-    :root *::before,
-    :root *::after {
-      transition: none !important;
-    }
   }
 
   /* Global focus-visible ring — WCAG AA compliant, visible on all elements */
@@ -368,4 +352,48 @@
       hsl(var(--muted)) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
+}
+
+/* ── View Transitions API: Theme Toggle Circular Reveal ──────────────────── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Going to Dark Mode */
+.dark::view-transition-old(root) {
+  z-index: 1;
+}
+.dark::view-transition-new(root) {
+  z-index: 999;
+  animation: clip-reveal 0.6s cubic-bezier(0.87, 0, 0.13, 1) forwards;
+}
+
+/* Going to Light Mode */
+::view-transition-old(root):not(.dark *) {
+  z-index: 999;
+  animation: clip-reveal-reverse 0.6s cubic-bezier(0.87, 0, 0.13, 1) forwards;
+}
+::view-transition-new(root):not(.dark *) {
+  z-index: 1;
+}
+
+/* The actual clip-path animations using the captured mouse coordinates */
+@keyframes clip-reveal {
+  0% {
+    clip-path: circle(0px at var(--click-x, 50%) var(--click-y, 50%));
+  }
+  100% {
+    clip-path: circle(150vw at var(--click-x, 50%) var(--click-y, 50%));
+  }
+}
+
+@keyframes clip-reveal-reverse {
+  0% {
+    clip-path: circle(150vw at var(--click-x, 50%) var(--click-y, 50%));
+  }
+  100% {
+    clip-path: circle(0px at var(--click-x, 50%) var(--click-y, 50%));
+  }
 }

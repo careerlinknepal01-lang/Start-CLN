@@ -7,6 +7,7 @@ import type { FeedComment } from "@/hooks/useFeed";
 import { Loader2, Send, Trash2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
+import { AlertConfirmDialog } from "@/components/ui/AlertConfirmDialog";
 
 interface CommentsSectionProps {
   postId: string;
@@ -26,6 +27,7 @@ const CommentItem = ({
 }) => {
   const { mutate: deleteComment, isPending } = useDeleteComment();
   const isOwner = comment.author_id === currentUserId;
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
     <div className="flex gap-3 group animate-in fade-in duration-200">
@@ -59,7 +61,8 @@ const CommentItem = ({
           </span>
           {isOwner && (
             <button
-              onClick={() => deleteComment({ id: comment.id, post_id: postId })}
+              type="button"
+              onClick={() => setConfirmDelete(true)}
               disabled={isPending}
               className="text-[10px] text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100 flex items-center gap-1"
             >
@@ -73,6 +76,16 @@ const CommentItem = ({
           )}
         </div>
       </div>
+      <AlertConfirmDialog
+        open={confirmDelete}
+        onOpenChange={setConfirmDelete}
+        title="Delete this comment?"
+        description="This action cannot be undone."
+        confirmText="Delete"
+        destructive
+        loading={isPending}
+        onConfirm={() => deleteComment({ id: comment.id, post_id: postId }, { onSuccess: () => setConfirmDelete(false) })}
+      />
     </div>
   );
 };

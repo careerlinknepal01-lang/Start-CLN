@@ -23,7 +23,7 @@ import { UserAvatar } from "@/components/UserAvatar";
 import { PostTypeBadge } from "./PostTypeBadge";
 import { CommentsSection } from "./CommentsSection";
 import { EditPostDialog } from "./EditPostDialog";
-import { useLikePost, useBookmarkPost, useDeletePost, useReportPost } from "@/hooks/useFeed";
+import { useLikePost, useBookmarkPost, useDeletePost, useReportPost, usePinPost } from "@/hooks/useFeed";
 import type { FeedPost } from "@/hooks/useFeed";
 import {
   Heart,
@@ -36,6 +36,8 @@ import {
   Flag,
   BadgeCheck,
   Loader2,
+  Pin,
+  PinOff
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
@@ -45,6 +47,7 @@ interface PostCardProps {
   currentUserId: string;
   currentUserName: string;
   currentAvatarUrl?: string | null;
+  isCommunityAdmin?: boolean;
 }
 
 const REPORT_REASONS = [
@@ -60,6 +63,7 @@ export const PostCard = ({
   currentUserId,
   currentUserName,
   currentAvatarUrl,
+  isCommunityAdmin = false,
 }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -73,8 +77,10 @@ export const PostCard = ({
   const { mutate: bookmarkPost, isPending: bookmarking } = useBookmarkPost();
   const { mutate: deletePost, isPending: deleting } = useDeletePost();
   const { mutate: reportPost, isPending: reporting } = useReportPost();
+  const { mutate: pinPost, isPending: pinning } = usePinPost();
 
   const isOwner = post.author_id === currentUserId;
+  const canDelete = isOwner || isCommunityAdmin;
   const CONTENT_LIMIT = 300;
   const longContent = post.content.length > CONTENT_LIMIT;
   const displayContent =
@@ -104,8 +110,8 @@ export const PostCard = ({
 
   return (
     <>
-      <Card className="overflow-hidden border-border/60 shadow-sm hover:shadow-md transition-shadow duration-200 group">
-        <CardContent className="p-5">
+      <Card className="overflow-hidden border-border/50 shadow-sm hover:shadow-md transition-shadow duration-200 group rounded-2xl mb-6">
+        <CardContent className="p-6">
           {/* ── Author row ─────────────────────────────── */}
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="flex items-center gap-3 min-w-0">
@@ -125,7 +131,7 @@ export const PostCard = ({
                     {post.author_name}
                   </Link>
                   {post.author_is_verified && (
-                    <BadgeCheck className="h-3.5 w-3.5 text-primary shrink-0" />
+                    <BadgeCheck className="h-4 w-4 fill-blue-600 text-white shrink-0" />
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground truncate">
@@ -133,7 +139,7 @@ export const PostCard = ({
                   {post.author_field && post.author_college && " · "}
                   {post.author_college}
                 </p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">
+                <p className="text-[11px] text-muted-foreground/70 mt-0.5">
                   {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                   {post.edited && (
                     <span className="ml-1 opacity-60">(edited)</span>
@@ -143,6 +149,11 @@ export const PostCard = ({
             </div>
 
             <div className="flex items-center gap-1.5 shrink-0">
+              {post.is_pinned && (
+                <div className="flex items-center gap-1 text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full mr-1">
+                  <Pin className="h-3 w-3" /> Pinned
+                </div>
+              )}
               <PostTypeBadge type={post.type} />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -155,6 +166,24 @@ export const PostCard = ({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-44">
+                  {isCommunityAdmin && post.community_id && (
+                    <>
+                      <DropdownMenuItem 
+                        onClick={() => pinPost({ id: post.id, is_pinned: !post.is_pinned })} 
+                        className="gap-2"
+                        disabled={pinning}
+                      >
+                        {post.is_pinned ? <PinOff className="h-3.5 w-3.5" /> : <Pin className="h-3.5 w-3.5" />}
+                        {post.is_pinned ? "Unpin post" : "Pin to community"}
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  <DropdownMenuItem onClick={handleBookmark} className="gap-2" disabled={bookmarking}>
+                    <Bookmark className={`h-3.5 w-3.5 ${post.user_bookmarked ? "fill-primary text-primary" : ""}`} />
+                    {post.user_bookmarked ? "Unsave post" : "Save post"}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   {isOwner ? (
                     <>
                       <DropdownMenuItem onClick={() => setShowEditDialog(true)} className="gap-2">
@@ -162,6 +191,11 @@ export const PostCard = ({
                         Edit post
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
+                    </>
+                  ) : null}
+                  
+                  {canDelete ? (
+                    <>
                       <DropdownMenuItem
                         onClick={() => setShowDeleteDialog(true)}
                         className="gap-2 text-destructive focus:text-destructive"
@@ -169,8 +203,11 @@ export const PostCard = ({
                         <Trash2 className="h-3.5 w-3.5" />
                         Delete post
                       </DropdownMenuItem>
+                      {!isOwner && <DropdownMenuSeparator />}
                     </>
-                  ) : (
+                  ) : null}
+
+                  {!isOwner ? (
                     <>
                       <DropdownMenuItem
                         onClick={() => setShowReportDialog(true)}
@@ -188,7 +225,7 @@ export const PostCard = ({
                         Block user
                       </DropdownMenuItem>
                     </>
-                  )}
+                  ) : null}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -207,6 +244,21 @@ export const PostCard = ({
                 {contentExpanded ? "See less" : "See more"}
               </button>
             )}
+
+            {/* ── Tags ────────────────────────────────────── */}
+            {post.tags && post.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {post.tags.map((tag) => (
+                  <Link 
+                    key={tag} 
+                    to={`/search?q=${encodeURIComponent('#' + tag)}`}
+                    className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-[11px] font-semibold text-blue-600 hover:bg-blue-100 transition-colors"
+                  >
+                    #{tag}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* ── Media image ─────────────────────────────── */}
@@ -223,56 +275,49 @@ export const PostCard = ({
           )}
 
           {/* ── Action bar ──────────────────────────────── */}
-          <div className="flex items-center justify-start gap-6 mt-3 pt-3 border-t border-border/40">
+          <div className="flex items-center justify-start gap-8 mt-4 pt-4 border-t border-border/50">
             {/* Like */}
             <button
               onClick={handleLike}
               disabled={liking}
               className={`group flex items-center gap-2 text-sm font-medium transition-colors ${
                 post.user_liked
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-primary"
+                  ? "text-red-500"
+                  : "text-muted-foreground hover:text-foreground/90"
               }`}
             >
-              <div className={`p-1.5 rounded-full transition-colors ${post.user_liked ? "bg-primary/10" : "group-hover:bg-primary/10"}`}>
-                {liking ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Heart
-                    className={`h-4 w-4 transition-transform ${post.user_liked ? "fill-current scale-110" : "group-hover:scale-110"}`}
-                  />
-                )}
-              </div>
+              {liking ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <Heart
+                  className={`h-5 w-5 transition-transform ${post.user_liked ? "fill-current scale-110" : "group-hover:scale-110"}`}
+                />
+              )}
               {post.like_count > 0 && <span>{post.like_count}</span>}
             </button>
 
-            {/* Comment */}
             <button
               onClick={() => setShowComments(!showComments)}
               className={`group flex items-center gap-2 text-sm font-medium transition-colors ${
                 showComments
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-primary"
+                  ? "text-[#1e3a8a]"
+                  : "text-muted-foreground hover:text-foreground/90"
               }`}
             >
-              <div className={`p-1.5 rounded-full transition-colors ${showComments ? "bg-primary/10" : "group-hover:bg-primary/10"}`}>
-                <MessageCircle className="h-4 w-4 transition-transform group-hover:scale-110" />
-              </div>
+              <MessageCircle className="h-5 w-5 transition-transform group-hover:scale-110" />
               {post.comment_count > 0 && <span>{post.comment_count}</span>}
             </button>
 
-            {/* Share */}
             <button
               onClick={() => {
                 navigator.clipboard.writeText(`${window.location.origin}/posts/${post.id}`);
                 toast.success("Link copied to clipboard");
               }}
-              className="group flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors ml-auto"
+              className="group flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground/90 transition-colors ml-auto"
               title="Share post"
             >
-              <div className="p-1.5 rounded-full transition-colors group-hover:bg-primary/10">
-                <Share2 className="h-4 w-4 transition-transform group-hover:scale-110" />
-              </div>
+              <Share2 className="h-5 w-5 transition-transform group-hover:scale-110" />
+              <span>Share</span>
             </button>
           </div>
 

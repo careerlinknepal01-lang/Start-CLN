@@ -49,6 +49,7 @@ export default function EventDetail() {
 
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
+  const [imageFailed, setImageFailed] = useState(false);
 
   const loadEvent = useCallback(async () => {
     if (!id) return;
@@ -67,6 +68,7 @@ export default function EventDetail() {
 
       if (error) throw error;
       setEvent(data as Event);
+      setImageFailed(false);
 
       // Removed formal apply check
     } catch (e) {
@@ -119,9 +121,14 @@ export default function EventDetail() {
         </Button>
 
         {/* Event Image Banner */}
-        {event.image_url ? (
+        {event.image_url && !imageFailed ? (
           <div className="w-full h-56 rounded-2xl overflow-hidden">
-            <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" />
+            <img
+              src={event.image_url}
+              alt={event.title}
+              className="w-full h-full object-cover"
+              onError={() => setImageFailed(true)}
+            />
           </div>
         ) : (
           <div className="w-full h-40 rounded-2xl bg-gradient-to-br from-rose-500/20 via-orange-500/10 to-rose-500/5 flex items-center justify-center">

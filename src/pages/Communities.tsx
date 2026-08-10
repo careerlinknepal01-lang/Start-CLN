@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { pluralize } from "@/lib/pluralize";
 import { useQuery } from "@tanstack/react-query";
@@ -55,6 +56,7 @@ type CommunityRow = {
 const CATEGORY_FILTERS = ["All", "Tech & Coding", "Arts & Culture", "Career", "Study"];
 
 export default function Communities() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
@@ -218,7 +220,18 @@ export default function Communities() {
               return (
                 <article
                   key={community.id}
-                  className="group relative flex flex-col border border-border bg-card shadow-sm transition hover:border-primary/30 hover:shadow-md"
+                  onClick={() => navigate(`/communities/${community.id}`)}
+                  onKeyDown={(event) => {
+                    if (event.target !== event.currentTarget) return;
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      navigate(`/communities/${community.id}`);
+                    }
+                  }}
+                  tabIndex={0}
+                  role="link"
+                  aria-label={`Open ${community.name}`}
+                  className="group relative flex flex-col border border-border bg-card shadow-sm transition hover:border-primary/30 hover:shadow-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   style={{ borderRadius: "0" }}
                 >
                   <div
@@ -276,15 +289,17 @@ export default function Communities() {
                         className="min-h-9 text-xs"
                         style={{ borderRadius: "2px" }}
                         disabled={!user || toggleMembership.isPending}
-                        onClick={() =>
-                          user &&
-                          toggleMembership.mutate({
-                            communityId: community.id,
-                            userId: user.id,
-                            isMember,
-                            memberId: myMembership?.id,
-                          })
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (user) {
+                            toggleMembership.mutate({
+                              communityId: community.id,
+                              userId: user.id,
+                              isMember,
+                              memberId: myMembership?.id,
+                            });
+                          }
+                        }}
                       >
                         {toggleMembership.isPending ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
