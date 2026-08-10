@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { Image, Loader2, X, Calendar, Trophy, Briefcase, Send } from "lucide-react";
+import { Image, Loader2, X, Calendar, Trophy, Briefcase, Send, UploadCloud } from "lucide-react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
@@ -33,8 +35,46 @@ export const CreatePostCard = ({
   const [type, setType] = useState<FeedPost["type"]>("general");
   const [mediaUrl, setMediaUrl] = useState("");
   const [showMedia, setShowMedia] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { mutate: createPost, isPending } = useCreatePost();
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be less than 5MB");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `${userId}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("feed-images")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from("feed-images")
+        .getPublicUrl(filePath);
+
+      setMediaUrl(data.publicUrl);
+    } catch (error: any) {
+      toast.error("Error uploading image: " + error.message);
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
 
   useEffect(() => {
     if (defaultOpen) setExpanded(true);
@@ -86,7 +126,7 @@ export const CreatePostCard = ({
   const charCount = content.length;
   const maxChars = 3000;
   const isOverLimit = charCount > maxChars;
-  const canSubmit = content.trim().length > 0 && !isOverLimit && !isPending;
+  const canSubmit = content.trim().length > 0 && !isOverLimit && !isPending && !isUploading;
 
   return (
     <Card className="border-border bg-card text-card-foreground shadow-soft overflow-hidden mb-6 rounded-2xl">
@@ -119,10 +159,27 @@ export const CreatePostCard = ({
                       <Input
                         value={mediaUrl}
                         onChange={(event) => setMediaUrl(event.target.value)}
-                        placeholder="Paste image URL (https://...)"
+                        placeholder="Paste image URL or click Upload"
                         className="h-9 text-sm bg-muted/50"
-                        disabled={isPending}
+                        disabled={isPending || isUploading}
                       />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref={fileInputRef}
+                        className="hidden"
+                        onChange={handleFileUpload}
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploading || isPending}
+                        className="h-9 whitespace-nowrap"
+                      >
+                        {isUploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <UploadCloud className="h-4 w-4 mr-2" />}
+                        Upload
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"

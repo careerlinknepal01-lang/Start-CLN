@@ -79,7 +79,7 @@ export const PostsSearchProvider: SearchProvider = {
       title: `${item.profiles.name}'s Post`,
       subtitle: item.content.substring(0, 100), // Preview
       imageUrl: item.profiles.avatar_url || undefined,
-      url: `/post/${item.id}`,
+      url: `/posts/${item.id}`,
       createdAt: item.created_at,
       metadata: { postType: item.type },
     }));

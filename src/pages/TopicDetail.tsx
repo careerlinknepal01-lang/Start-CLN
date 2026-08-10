@@ -224,7 +224,7 @@ export default function TopicDetail() {
               {relatedPosts.map((post: any) => (
                 <Link
                   key={post.id}
-                  to={`/post/${post.id}`}
+                  to={`/posts/${post.id}`}
                   className="block p-3 rounded-xl border border-border hover:border-primary/30 hover:shadow-sm transition"
                 >
                   <p className="text-sm text-foreground line-clamp-2">{post.content}</p>
