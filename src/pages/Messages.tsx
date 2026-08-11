@@ -117,36 +117,22 @@ const Messages = () => {
   }, [user, activeId]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !activeId) return;
     const channel = supabase
-      .channel("msg-" + user.id)
+      .channel(`chat-${user.id}-${activeId}`)
       .on(
         "postgres_changes",
         {
           event: "INSERT",
           schema: "public",
           table: "messages",
-          filter: `receiver_id=eq.${user.id}`,
         },
         (payload) => {
           const m = payload.new as Message;
-          const other = m.sender_id === user.id ? m.receiver_id : m.sender_id;
-          if (other === activeId) {
-            setMessages((prev) => (prev.some((x) => x.id === m.id) ? prev : [...prev, m]));
-          }
-        }
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "messages",
-          filter: `sender_id=eq.${user.id}`,
-        },
-        (payload) => {
-          const m = payload.new as Message;
-          if (m.receiver_id === activeId) {
+          if (
+            (m.sender_id === user.id && m.receiver_id === activeId) ||
+            (m.sender_id === activeId && m.receiver_id === user.id)
+          ) {
             setMessages((prev) => (prev.some((x) => x.id === m.id) ? prev : [...prev, m]));
           }
         }
@@ -163,11 +149,8 @@ const Messages = () => {
 
   const activeContact = useMemo(() => contacts.find((c) => c.id === activeId), [contacts, activeId]);
 
-  const send = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user || !activeId || !input.trim() || sending) return;
-    const content = input.trim();
-    setInput("");
+  const handleSend = async (content: string) => {
+    if (!user || !activeId || !content.trim() || sending) return false;
     setSending(true);
     const { data, error } = await supabase
       .from("messages")
@@ -177,10 +160,22 @@ const Messages = () => {
     setSending(false);
     if (error) {
       toast.error(error.message);
-      setInput(content);
-      return;
+      return false;
     }
-    if (data) setMessages((prev) => (prev.some((x) => x.id === data.id) ? prev : [...prev, data as Message]));
+    if (data) {
+      setMessages((prev) => (prev.some((x) => x.id === data.id) ? prev : [...prev, data as Message]));
+      return true;
+    }
+    return false;
+  };
+
+  const send = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const content = input.trim();
+    if (!content) return;
+    setInput("");
+    const success = await handleSend(content);
+    if (!success) setInput(content);
   };
 
   if (loading) {
@@ -298,7 +293,16 @@ const Messages = () => {
               </div>
               <div ref={scrollRef} className="flex-1 space-y-2 overflow-y-auto bg-background p-4">
                 {messages.length === 0 && (
-                  <div className="py-8 text-center text-sm text-muted-foreground">Say hi 👋</div>
+                  <div className="py-8 flex justify-center">
+                    <Button 
+                      variant="outline"
+                      className="gap-2 rounded-full shadow-sm hover:shadow-md transition-all border-primary/20 hover:border-primary/40 hover:bg-primary/5 text-primary"
+                      onClick={() => handleSend("Hi 👋")}
+                      disabled={sending}
+                    >
+                      Say hi 👋
+                    </Button>
+                  </div>
                 )}
                 {messages.map((m) => {
                   const mine = m.sender_id === user?.id;
