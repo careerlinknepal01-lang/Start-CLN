@@ -1,5 +1,6 @@
 import type { FeedPost } from "@/hooks/useFeed";
 import { Award, Briefcase, Code, HelpCircle, LayoutGrid, TrendingUp } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface FilterBarProps {
   categoryFilter: FeedPost["type"] | null;
@@ -14,29 +15,33 @@ export function FilterBar({
   filter,
   setFilter
 }: FilterBarProps) {
-  
+
   const filters = [
     { id: null, label: "All Posts", icon: <LayoutGrid className="h-4 w-4" /> },
-    { id: "achievement", label: "Achievements", icon: <Award className="h-4 w-4 text-green-500" /> },
-    { id: "project_update", label: "Project Updates", icon: <Code className="h-4 w-4 text-pink-500" /> },
-    { id: "opportunity", label: "Opportunities", icon: <Briefcase className="h-4 w-4 text-red-800" /> },
-    { id: "question", label: "Questions", icon: <HelpCircle className="h-4 w-4 text-red-500" /> },
+    { id: "achievement", label: "Achievements", icon: <Award className="h-4 w-4 text-success" /> },
+    { id: "project_update", label: "Project Updates", icon: <Code className="h-4 w-4 text-primary" /> },
+    { id: "opportunity", label: "Opportunities", icon: <Briefcase className="h-4 w-4 text-destructive" /> },
+    { id: "question", label: "Questions", icon: <HelpCircle className="h-4 w-4 text-warning" /> },
   ] as const;
 
+  const chip = (active: boolean) =>
+    cn(
+      "flex items-center gap-2 px-3.5 py-2 rounded-[4px] text-[13px] font-semibold whitespace-nowrap border transition-colors",
+      active
+        ? "bg-primary text-primary-foreground border-transparent"
+        : "bg-card text-card-foreground text-muted-foreground border-border hover:bg-secondary"
+    );
+
   return (
-    <div className="flex items-center gap-3 overflow-x-auto scrollbar-none pb-2 pt-2">
+    <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-2 pt-2">
       {filters.map((cat) => (
         <button
           key={cat.label}
           onClick={() => {
-            setCategoryFilter(cat.id as any);
+            setCategoryFilter(cat.id);
             setFilter("recent");
           }}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-semibold whitespace-nowrap transition-colors ${
-            categoryFilter === cat.id && filter === "recent"
-              ? "bg-[#1e3a8a] text-white border border-transparent shadow-sm"
-              : "bg-card text-card-foreground text-muted-foreground border border-border hover:bg-secondary"
-          }`}
+          className={chip(categoryFilter === cat.id && filter === "recent")}
         >
           {cat.icon}
           {cat.label}
@@ -44,13 +49,9 @@ export function FilterBar({
       ))}
       <button
         onClick={() => { setCategoryFilter(null); setFilter("trending"); }}
-        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-semibold whitespace-nowrap transition-colors ${
-          filter === "trending"
-            ? "bg-[#1e3a8a] text-white border border-transparent shadow-sm"
-            : "bg-card text-card-foreground text-muted-foreground border border-border hover:bg-secondary"
-        }`}
+        className={chip(filter === "trending")}
       >
-        <TrendingUp className="h-4 w-4 text-orange-500" />
+        <TrendingUp className="h-4 w-4 text-primary" />
         Trending
       </button>
     </div>

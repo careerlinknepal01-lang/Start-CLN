@@ -108,15 +108,18 @@ function SidebarNavLink({
       end={item.to === "/profile"}
       onClick={onClick}
       className={cn(
-        "group relative flex items-center gap-3 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        collapsed ? "justify-center h-10 w-10 mx-auto rounded-xl" : "px-4 py-3 rounded-xl",
+        "group relative flex items-center gap-3 text-sm font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        collapsed ? "justify-center h-10 w-10 mx-auto rounded-[4px]" : "px-4 py-2.5 rounded-[4px]",
         isActive
-          ? "bg-primary text-primary-foreground shadow-sm"
+          ? "bg-primary/10 text-primary"
           : "text-muted-foreground hover:bg-secondary hover:text-foreground",
       )}
     >
       <item.icon className={cn("shrink-0", collapsed ? "h-5 w-5" : "h-5 w-5")} aria-hidden="true" />
       {!collapsed && <span>{item.label}</span>}
+      {!collapsed && isActive && (
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[2px] bg-primary" aria-hidden="true" />
+      )}
     </NavLink>
   );
 }
@@ -133,7 +136,7 @@ function NavSection({
   return (
     <div className="space-y-0.5">
       {!collapsed && (
-        <p className="px-4 pb-2 pt-4 text-xs font-semibold tracking-wider uppercase text-muted-foreground/70">
+        <p className="px-4 pb-2 pt-4 text-[11px] font-semibold tracking-[0.12em] uppercase text-muted-foreground/70">
           {group.section}
         </p>
       )}
@@ -236,16 +239,16 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
         <Link
           to="/feed"
           className={cn(
-            "flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-            opts?.collapsed ? "" : "rounded-xl",
+            "flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-[2px]",
+            opts?.collapsed ? "" : "",
           )}
           aria-label="CareerLink Nepal — go to feed"
           onClick={opts?.onNavClick}
         >
           <img src="/cln.png" alt="" className="h-8 w-8 object-contain" aria-hidden="true" />
           {!opts?.collapsed && (
-            <span className="font-bold text-lg tracking-tight text-foreground">
-              CareerLink <span className="text-[#f97316]">Nepal</span>
+            <span className="font-display font-bold text-lg tracking-tight text-foreground">
+              CareerLink <span className="text-primary">Nepal</span>
             </span>
           )}
         </Link>
@@ -253,7 +256,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
 
       {/* Navigation */}
       <ScrollArea className="flex-1 py-4">
-        <nav className={cn("flex flex-col gap-2", opts?.collapsed ? "items-center px-2" : "px-4")}>
+        <nav className={cn("flex flex-col gap-3", opts?.collapsed ? "items-center px-2" : "px-3")}>
           {navGroups.map((group) => (
             <NavSection
               key={group.section}
@@ -283,13 +286,13 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
       )}>
         {opts?.collapsed ? (
           <>
-            <div className="grid h-8 w-8 place-items-center rounded-[2px] bg-primary text-primary-foreground text-xs font-bold">
+            <div className="grid h-8 w-8 place-items-center rounded-[2px] bg-primary/10 text-primary font-display font-bold text-xs">
               {userInitial}
             </div>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-xl text-muted-foreground hover:text-destructive"
+              className="h-8 w-8 rounded-[4px] text-muted-foreground hover:text-destructive"
               onClick={handleLogout}
               aria-label="Sign out"
             >
@@ -298,7 +301,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
           </>
         ) : (
           <div className="flex items-center gap-3">
-            <div className="grid h-8 w-8 shrink-0 place-items-center rounded-[2px] bg-primary text-primary-foreground text-xs font-bold">
+            <div className="grid h-8 w-8 shrink-0 place-items-center rounded-[2px] bg-primary/10 text-primary font-display font-bold text-xs">
               {userInitial}
             </div>
             <div className="min-w-0 flex-1">
@@ -310,7 +313,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 shrink-0 rounded-xl text-muted-foreground hover:text-destructive"
+              className="h-8 w-8 shrink-0 rounded-[4px] text-muted-foreground hover:text-destructive"
               onClick={handleLogout}
               aria-label="Sign out"
             >
@@ -349,7 +352,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
             <Button
               variant="ghost"
               size="icon"
-              className="hidden md:inline-flex h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground bg-secondary"
+              className="hidden md:inline-flex h-9 w-9 rounded-[4px] text-muted-foreground hover:text-foreground bg-secondary"
               onClick={() => setSidebarCollapsed((p) => !p)}
               aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
@@ -376,11 +379,11 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
               </Sheet>
               <Link
                 to="/feed"
-                className="flex items-center gap-2 font-bold text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-[2px]"
+                className="flex items-center gap-2 font-display font-bold text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-[2px]"
                 aria-label="CareerLink Nepal"
               >
                 <img src="/cln.png" alt="" className="h-6 w-6 object-contain" aria-hidden="true" />
-                <span className="text-foreground">CLN</span>
+                <span className="text-foreground">CareerLink <span className="text-primary">Nepal</span></span>
               </Link>
             </div>
 
@@ -412,7 +415,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
                 placeholder="Search students, posts, events..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-secondary border-none pl-12 h-11 rounded-full text-base focus-visible:ring-2 focus-visible:ring-primary/20 placeholder:text-muted-foreground"
+                className="w-full bg-secondary border-none pl-12 h-11 rounded-[4px] text-base focus-visible:ring-2 focus-visible:ring-primary/25 placeholder:text-muted-foreground"
               />
             </form>
           </div>
@@ -450,7 +453,8 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
                   )}
                   {unread > 0 && (
                     <Badge
-                      className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] text-destructive-foreground"
+                      variant="destructive"
+                      className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px]"
                       aria-hidden="true"
                     >
                       {unread > 9 ? "9+" : unread}
@@ -459,7 +463,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
                 </Button>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end" className="w-80 border-border shadow-xl">
+              <DropdownMenuContent align="end" className="w-80 border-border shadow-elevated">
                 <div className="flex items-center justify-between px-3 py-2">
                   <DropdownMenuLabel className="font-semibold p-0">Notifications</DropdownMenuLabel>
                   {unread > 0 && (

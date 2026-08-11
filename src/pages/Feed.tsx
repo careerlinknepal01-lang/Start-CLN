@@ -71,7 +71,7 @@ export default function Feed() {
    * @param {string} postId - The unique identifier of the post.
    */
   const navigateToPostDetails = (postId: string) => {
-    navigate(`/posts/${postId}`);
+    navigate(`/post/${postId}`);
   };
 
   // We abstract the right sidebar content into a variable to keep the main JSX return clean and readable
@@ -79,7 +79,7 @@ export default function Feed() {
     <div className="space-y-6">
       <UpcomingEventsWidget userId={authenticatedUser?.id} />
       <TrendingTopicsWidget userId={authenticatedUser?.id} userField={currentUserProfile?.field} />
-      <div className="flex flex-wrap gap-x-4 gap-y-2 px-2 text-xs text-slate-400 font-medium">
+      <div className="flex flex-wrap gap-x-4 gap-y-2 px-2 text-xs text-muted-foreground font-medium">
         <Link to="/about" className="hover:underline">About</Link>
         <Link to="/privacy" className="hover:underline">Privacy</Link>
         <Link to="/terms" className="hover:underline">Terms</Link>
@@ -130,7 +130,7 @@ export default function Feed() {
           key={post.id} 
           // We assign a ref callback here so that the useFeedLogic hook can auto-scroll to this specific post if a URL parameter requests it
           ref={(el) => { postRefs.current[post.id] = el; }}
-          className={highlightPostId === post.id ? "ring-2 ring-blue-500 rounded-3xl" : ""}
+          className={highlightPostId === post.id ? "ring-2 ring-primary rounded-[6px]" : ""}
         >
           <PostItem
             post={post}

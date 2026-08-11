@@ -7,23 +7,23 @@ const CONFIG: Record<
 > = {
   achievement: {
     label: "Achievement",
-    className: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
+    className: "bg-warning/10 text-warning",
   },
   project_update: {
     label: "Project Update",
-    className: "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400",
+    className: "bg-primary/10 text-primary",
   },
   opportunity: {
     label: "Opportunity",
-    className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400",
+    className: "bg-success/10 text-success",
   },
   general: {
     label: "General",
-    className: "bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400",
+    className: "bg-secondary text-secondary-foreground",
   },
   question: {
     label: "Question",
-    className: "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400",
+    className: "bg-destructive/10 text-destructive",
   },
 };
 
@@ -36,7 +36,7 @@ export const PostTypeBadge = ({ type }: PostTypeBadgeProps) => {
   return (
     <Badge
       variant="secondary"
-      className={`text-[11px] font-semibold px-3 py-1 rounded-full border-none shadow-none ${cfg.className}`}
+      className={`text-[11px] font-semibold px-2 py-0.5 rounded-[2px] border-none shadow-none ${cfg.className}`}
     >
       {cfg.label}
     </Badge>

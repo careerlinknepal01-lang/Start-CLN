@@ -238,7 +238,7 @@ function Reveal({
   );
 }
 
-function AnimatedStatCard({ item, index }: { item: typeof stats[0]; index: number }) {
+function AnimatedStatCard({ item }: { item: typeof stats[0]; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const count = useAnimatedCounter(Number(item.value.replace(/[^0-9]/g, "")), visible);
@@ -257,19 +257,28 @@ function AnimatedStatCard({ item, index }: { item: typeof stats[0]; index: numbe
   }, []);
 
   return (
-    <div ref={ref} className="border-r border-border/40 last:border-r-0 px-5 first:pl-0 last:pr-0">
+    <div ref={ref} className="border-r border-border last:border-r-0 px-6 first:pl-0 last:pr-0 py-1">
       <div className="flex items-center gap-3">
-        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-[3px] bg-primary/5">
-          <item.icon className="h-5 w-5 text-primary" />
+        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-[2px] bg-primary/8">
+          <item.icon className="h-4 w-4 text-primary" />
         </div>
         <div>
           <div className="text-2xl font-bold tracking-tight text-foreground tabular-nums">
             {visible ? count.toLocaleString() : "0"}
-            <span className="text-accent">+</span>
+            <span className="text-primary">+</span>
           </div>
-          <div className="text-xs text-muted-foreground tracking-wide uppercase">{item.label}</div>
+          <div className="text-[11px] text-muted-foreground tracking-wide uppercase">{item.label}</div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function SectionRule({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-4">
+      <span className="chip">{label}</span>
+      <span className="rule-h flex-1" aria-hidden="true" />
     </div>
   );
 }
@@ -299,22 +308,8 @@ const Landing = () => {
     return () => clearInterval(interval);
   }, []);
 
-  /* ── 3D tilt for hero card ── */
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const handlePointerMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const node = cardRef.current;
-    if (!node) return;
-    const rect = node.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width - 0.5;
-    const py = (e.clientY - rect.top) / rect.height - 0.5;
-    setTilt({ x: py * -8, y: px * 10 });
-  }, []);
-  const resetTilt = useCallback(() => setTilt({ x: 0, y: 0 }), []);
-
   return (
-    <div className="force-light bg-[hsl(35,20%,97%)] text-foreground">
+    <div className="force-light min-h-screen bg-background text-foreground">
       <style>{`
         @media (prefers-reduced-motion: reduce) {
           html { scroll-behavior: auto; }
@@ -331,7 +326,7 @@ const Landing = () => {
       {/* Scroll progress */}
       <div className="fixed inset-x-0 top-0 z-[60] h-[2px] bg-transparent" aria-hidden="true">
         <div
-          className="h-full bg-accent"
+          className="h-full bg-primary"
           style={{
             width: `${progress}%`,
             transitionProperty: "width",
@@ -343,21 +338,21 @@ const Landing = () => {
 
       {/* ── Navigation ─────────────────────────────────────────────────── */}
       <header
-        className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           scrolled
-            ? "bg-[hsl(35,20%,97%)]/85 backdrop-blur-xl shadow-sm"
+            ? "bg-background/90 backdrop-blur-xl border-b border-border"
             : "bg-transparent"
-        } ${scrolled ? "text-foreground" : "text-primary-foreground"}`}
+        }`}
       >
         <div className="mx-auto flex max-w-[1060px] items-center justify-between px-6 sm:px-8 lg:px-10 h-16">
           <Link
             to="/"
-            className="flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-[3px]"
+            className="flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-[2px]"
             aria-label="CareerLink Nepal home"
           >
             <img src="/cln.png" alt="" className="h-7 w-7 object-contain" />
-            <span className="font-bold text-sm tracking-tight text-inherit">
-              CareerLink <span className="text-accent">Nepal</span>
+            <span className="font-display font-bold text-base tracking-tight text-foreground">
+              CareerLink <span className="text-primary">Nepal</span>
             </span>
           </Link>
 
@@ -365,45 +360,40 @@ const Landing = () => {
           <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
             <a
               href="#how-it-works"
-              className={`px-3 py-2 text-[13px] tracking-wide uppercase hover:text-inherit ${scrolled ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/70 hover:text-primary-foreground"}`}
+              className="px-3 py-2 text-[12px] font-semibold tracking-wider uppercase text-muted-foreground hover:text-foreground transition-colors"
             >
               How it works
             </a>
             <a
               href="#features"
-              className={`px-3 py-2 text-[13px] tracking-wide uppercase hover:text-inherit ${scrolled ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/70 hover:text-primary-foreground"}`}
+              className="px-3 py-2 text-[12px] font-semibold tracking-wider uppercase text-muted-foreground hover:text-foreground transition-colors"
             >
               Features
             </a>
             <a
               href="#testimonials"
-              className={`px-3 py-2 text-[13px] tracking-wide uppercase hover:text-inherit ${scrolled ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/70 hover:text-primary-foreground"}`}
+              className="px-3 py-2 text-[12px] font-semibold tracking-wider uppercase text-muted-foreground hover:text-foreground transition-colors"
             >
               Students
             </a>
-            <div className={`w-px h-4 mx-3 ${scrolled ? "bg-border" : "bg-primary-foreground/20"}`} />
+            <div className="w-px h-4 mx-3 bg-border" />
             {user ? (
               <div className="flex items-center gap-2">
                 {!isAdminLoading && isAdmin && (
-                  <Button asChild
-                    variant="outline" 
-                    size="sm" 
-                    style={{ borderRadius: "4px" }} 
-                    className={`text-xs font-semibold tracking-wide uppercase px-3 h-8 ${scrolled ? "text-muted-foreground hover:text-foreground border-border/50" : "text-primary-foreground/70 hover:text-primary-foreground border-primary-foreground/20"}`}
-                  >
+                  <Button asChild variant="outline" size="sm" className="text-xs font-semibold uppercase tracking-wide px-3 h-8">
                     <Link to="/admin">Admin Panel</Link>
                   </Button>
                 )}
-                <Button asChild size="sm" style={{ borderRadius: "4px" }} className="bg-accent text-accent-foreground hover:bg-accent/90 text-xs font-semibold tracking-wide uppercase px-4 h-8 shadow-sm">
+                <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold uppercase tracking-wide px-4 h-8">
                   <Link to="/feed">Open app</Link>
                 </Button>
               </div>
             ) : (
               <>
-                <Button asChild variant="ghost" size="sm" style={{ borderRadius: "4px" }} className={`text-xs font-semibold tracking-wide uppercase px-3 h-8 ${scrolled ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/70 hover:text-primary-foreground"}`}>
+                <Button asChild variant="ghost" size="sm" className="text-xs font-semibold uppercase tracking-wide px-3 h-8 text-muted-foreground hover:text-foreground">
                   <Link to="/login">Sign in</Link>
                 </Button>
-                <Button asChild size="sm" style={{ borderRadius: "4px" }} className="bg-accent text-accent-foreground hover:bg-accent/90 text-xs font-semibold tracking-wide uppercase px-4 h-8 shadow-sm">
+                <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold uppercase tracking-wide px-4 h-8">
                   <Link to="/signup">Join free</Link>
                 </Button>
               </>
@@ -412,7 +402,7 @@ const Landing = () => {
 
           {/* Mobile toggle */}
           <button
-            className={`md:hidden grid h-9 w-9 place-items-center rounded-[3px] ${scrolled ? "hover:bg-secondary/60" : "hover:bg-primary-foreground/10"}`}
+            className="md:hidden grid h-9 w-9 place-items-center rounded-[2px] hover:bg-secondary/60 transition-colors text-foreground"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -426,7 +416,7 @@ const Landing = () => {
 
         {/* Mobile overlay */}
         <div
-          className={`md:hidden fixed inset-0 z-[55] bg-[hsl(35,20%,97%)] text-foreground overflow-y-auto transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          className={`md:hidden fixed inset-0 z-[55] bg-background text-foreground overflow-y-auto transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}
         >
@@ -438,8 +428,8 @@ const Landing = () => {
               aria-label="CareerLink Nepal home"
             >
               <img src="/cln.png" alt="" className="h-7 w-7 object-contain" />
-              <span className="font-bold text-sm tracking-tight">
-                CareerLink <span className="text-accent">Nepal</span>
+              <span className="font-display font-bold text-base tracking-tight">
+                CareerLink <span className="text-primary">Nepal</span>
               </span>
             </Link>
             <button
@@ -463,12 +453,12 @@ const Landing = () => {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="group block py-5 border-b border-border/30 last:border-b-0"
+                className="group block py-5 border-b border-border last:border-b-0"
                 style={{
                   transitionDelay: mobileMenuOpen ? `${i * 80}ms` : "0ms",
                 }}
               >
-                <span className="font-display text-[clamp(1.5rem,5vw,2.2rem)] font-bold text-foreground group-hover:text-accent transition-colors duration-200">
+                <span className="font-display text-[clamp(1.5rem,5vw,2.2rem)] font-bold text-foreground group-hover:text-primary transition-colors duration-200">
                   {link.label}
                 </span>
               </a>
@@ -476,7 +466,7 @@ const Landing = () => {
           </nav>
 
           <div className="px-8 pb-10">
-            <div className="pt-8 border-t border-border/30">
+            <div className="pt-8 border-t border-border">
               <p className="text-[11px] text-muted-foreground mb-5 tracking-[0.15em] uppercase">
                 2,500+ students on CLN
               </p>
@@ -484,25 +474,20 @@ const Landing = () => {
                 {user ? (
                   <div className="flex flex-col gap-3">
                     {!isAdminLoading && isAdmin && (
-                      <Button asChild
-                        variant="outline" 
-                        style={{ borderRadius: "4px" }} 
-                        className="w-full text-sm font-semibold h-11"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
+                      <Button asChild variant="outline" className="w-full text-sm font-semibold h-11" onClick={() => setMobileMenuOpen(false)}>
                         <Link to="/admin">Admin Panel</Link>
                       </Button>
                     )}
-                    <Button asChild style={{ borderRadius: "4px" }} className="w-full bg-accent text-accent-foreground hover:bg-accent/90 text-sm font-semibold h-11">
+                    <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-semibold h-11">
                       <Link to="/feed" onClick={() => setMobileMenuOpen(false)}>Open app</Link>
                     </Button>
                   </div>
                 ) : (
                   <>
-                    <Button asChild style={{ borderRadius: "4px" }} className="w-full bg-accent text-accent-foreground hover:bg-accent/90 text-sm font-semibold h-11 shadow-sm">
+                    <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-semibold h-11">
                       <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>Join CLN — free</Link>
                     </Button>
-                    <Button asChild variant="outline" style={{ borderRadius: "4px" }} className="w-full text-sm font-semibold h-11">
+                    <Button asChild variant="outline" className="w-full text-sm font-semibold h-11">
                       <Link to="/login" onClick={() => setMobileMenuOpen(false)}>Sign in</Link>
                     </Button>
                   </>
@@ -515,34 +500,32 @@ const Landing = () => {
 
       <main>
         {/* ═══════════════════════════════════════════════════════════════
-            HERO
+            HERO — the campus notice board
            ═══════════════════════════════════════════════════════════════ */}
-        <section className="relative min-h-[88vh] flex items-center overflow-hidden bg-primary" aria-labelledby="hero-heading">
-          {/* Clean background — no gradients, no orbs, no grid lines */}
-          <div className="absolute inset-0" style={{ background: "hsl(220, 70%, 18%)" }} />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_30%,hsl(22,95%,55%,0.08),transparent_60%)]" />
+        <section className="relative overflow-hidden bg-background" aria-labelledby="hero-heading">
+          <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_85%_0%,hsl(34,92%,52%,0.07),transparent_55%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_10%_90%,hsl(192,28%,13%,0.04),transparent_50%)]" />
+          </div>
 
-          <div className="container relative z-10 pt-28 pb-20">
-            <div className="grid items-end gap-14 lg:grid-cols-[1.2fr_1fr]" style={{ maxWidth: "1060px", margin: "0 auto" }}>
+          <div className="relative z-10 mx-auto pt-36 pb-24" style={{ maxWidth: "1060px", paddingLeft: "2rem", paddingRight: "2rem" }}>
+            <div className="grid items-start gap-14 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
               {/* Left: copy */}
               <div>
                 <Reveal delay={80} axis="y">
-                  <div
-                    className="inline-flex items-center gap-2 border px-3 py-1 text-[11px] font-semibold tracking-wider uppercase text-primary-foreground/80"
-                    style={{ borderRadius: "2px", borderColor: "hsl(var(--primary-foreground)/0.2)", background: "hsl(var(--primary-foreground)/0.06)" }}
-                  >
-                    <Sparkles className="h-3 w-3 text-accent" aria-hidden="true" />
+                  <span className="chip">
+                    <Sparkles className="h-3 w-3 text-primary" aria-hidden="true" />
                     For Nepali undergraduates
-                  </div>
+                  </span>
                 </Reveal>
 
                 <Reveal delay={150} axis="y">
                   <h1
                     id="hero-heading"
-                    className="mt-6 font-display text-[clamp(2.8rem,6vw,4.8rem)] font-bold leading-[1.08] tracking-tight text-primary-foreground"
+                    className="mt-7 font-display text-[clamp(2.6rem,5.5vw,4.4rem)] font-bold leading-[1.06] tracking-tight text-foreground"
                   >
                     The student{" "}
-                    <span className="relative inline-flex flex-col h-[1.08em] overflow-hidden text-accent align-top">
+                    <span className="relative inline-flex flex-col h-[1.06em] overflow-hidden text-primary align-top">
                       <span className="sr-only">{cyclingWords[activeWord]}</span>
                       <span className="block relative" aria-hidden="true">
                         {cyclingWords.map((word, i) => (
@@ -566,7 +549,7 @@ const Landing = () => {
                 </Reveal>
 
                 <Reveal delay={250} axis="y">
-                  <p className="mt-5 max-w-[44ch] text-base leading-relaxed text-primary-foreground/75 md:text-lg">
+                  <p className="mt-6 max-w-[46ch] text-base leading-relaxed text-muted-foreground md:text-lg">
                     A student-only network for Nepali undergraduates. Create a profile,
                     find peers by college and field, join communities, discover events,
                     and build a career network before you graduate.
@@ -574,22 +557,20 @@ const Landing = () => {
                 </Reveal>
 
                 <Reveal delay={350} axis="y">
-                  <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                  <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                     <Button
                       asChild
-                      style={{ borderRadius: "4px" }}
-                      className="group relative bg-accent text-accent-foreground hover:bg-accent/90 text-sm font-semibold h-11 px-6 shadow-sm"
+                      className="group bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-semibold h-12 px-7"
                     >
                       <Link to={primaryHref}>
                         {user ? "Go to feed" : "Join CLN — it's free"}
-                        <ArrowRight className="ml-2 h-3.5 w-3.5" aria-hidden="true" />
+                        <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
                       </Link>
                     </Button>
                     <Button
                       asChild
                       variant="outline"
-                      style={{ borderRadius: "4px", borderColor: "hsl(var(--primary-foreground)/0.25)" }}
-                      className="bg-primary-foreground/8 text-primary-foreground hover:bg-primary-foreground/12 text-sm font-semibold h-11 px-6"
+                      className="h-12 px-7 text-sm font-semibold"
                     >
                       <Link to={user ? "/explore" : "/login"}>
                         {user ? "Explore network" : "Sign in"}
@@ -599,10 +580,10 @@ const Landing = () => {
                 </Reveal>
 
                 <Reveal delay={420} axis="y">
-                  <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-primary-foreground/65">
+                  <div className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-muted-foreground">
                     {["Free for all students", "No spam", "Nepal-focused"].map((item) => (
                       <span key={item} className="flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
+                        <CheckCircle2 className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
                         {item}
                       </span>
                     ))}
@@ -610,80 +591,63 @@ const Landing = () => {
                 </Reveal>
               </div>
 
-              {/* Right: profile card */}
+              {/* Right: notice-board profile card */}
               <div className="hidden lg:block">
                 <Reveal delay={280} axis="none">
-                  <div style={{ perspective: "1000px" }}>
-                    <div
-                      ref={cardRef}
-                      onMouseMove={handlePointerMove}
-                      onMouseLeave={resetTilt}
-                      style={{
-                        transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-                        borderRadius: "0",
-                        transitionProperty: "transform",
-                        transitionDuration: "300ms",
-                        transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
-                      }}
-                      className="relative border border-primary-foreground/15 bg-primary-foreground/8 shadow-xl"
-                    >
-                      <div className="bg-background text-foreground">
-                        <div className="h-20 bg-primary" />
-                        <div className="px-6 pb-6 -mt-10">
-                          <div
-                            className="h-20 w-20 border-4 border-background bg-primary flex items-center justify-center text-primary-foreground font-bold text-2xl"
-                            style={{ borderRadius: "2px" }}
-                          >
-                            TNS
-                          </div>
-                          <div className="font-semibold text-sm mt-3">Tapendra Narayan Acharya</div>
+                  <div className="border border-border bg-card" style={{ borderRadius: "4px" }}>
+                    <div className="flex items-center justify-between border-b border-border px-5 py-3">
+                      <span className="text-[11px] font-semibold tracking-[0.15em] uppercase text-muted-foreground">Student notice</span>
+                      <span className="flex items-center gap-1.5 text-[11px] font-semibold text-primary uppercase tracking-wide">
+                        <span className="relative flex h-1.5 w-1.5">
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/60" />
+                          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+                        </span>
+                        Live
+                      </span>
+                    </div>
+                    <div className="px-6 py-6">
+                      <div className="flex items-center gap-4">
+                        <div className="grid h-14 w-14 shrink-0 place-items-center rounded-[2px] bg-primary/10 text-primary font-display font-bold text-xl">
+                          TNS
+                        </div>
+                        <div>
+                          <div className="font-semibold text-sm text-foreground">Tapendra Narayan Acharya</div>
                           <div className="text-xs text-muted-foreground mt-0.5">BSc CSIT · Tribhuvan University</div>
-
-                          <div className="flex flex-wrap gap-1.5 mt-3">
-                            {["React", "Python", "UI/UX", "Node.js"].map((skill) => (
-                              <span key={skill} className="text-[10px] font-medium bg-secondary text-secondary-foreground px-2 py-0.5" style={{ borderRadius: "2px" }}>
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-
-                          <div className="mt-4 grid grid-cols-3 gap-3">
-                            {[
-                              { label: "Connections", value: "48" },
-                              { label: "Posts", value: "12" },
-                              { label: "Events", value: "5" },
-                            ].map((stat) => (
-                              <div key={stat.label} className="bg-secondary/50 py-2 text-center" style={{ borderRadius: "2px" }}>
-                                <div className="text-sm font-bold text-primary">{stat.value}</div>
-                                <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{stat.label}</div>
-                              </div>
-                            ))}
-                          </div>
-
-                          <div className="mt-4 border-t border-border pt-3 space-y-2">
-                            {[
-                              { emoji: "🏆", text: "Won Hack-a-thon 2024" },
-                              { emoji: "🚀", text: "Building NepalTask" },
-                              { emoji: "💼", text: "Open to internship opportunities" },
-                            ].map((item) => (
-                              <div key={item.text} className="flex items-start gap-2 text-xs text-muted-foreground">
-                                <span className="shrink-0">{item.emoji}</span>
-                                <span className="line-clamp-1">{item.text}</span>
-                              </div>
-                            ))}
-                          </div>
                         </div>
                       </div>
 
-                      <div
-                        className="absolute -right-3 -top-3 flex items-center gap-1.5 bg-accent text-accent-foreground px-2.5 py-1 text-[11px] font-semibold shadow-md"
-                        style={{ borderRadius: "2px" }}
-                      >
-                        <span className="relative flex h-1.5 w-1.5">
-                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-foreground/60" />
-                          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent-foreground" />
-                        </span>
-                        Live network
+                      <div className="mt-5 flex flex-wrap gap-1.5">
+                        {["React", "Python", "UI/UX", "Node.js"].map((skill) => (
+                          <span key={skill} className="chip !px-2 !py-0.5 !text-[10px] !normal-case">
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="mt-5 grid grid-cols-3 border border-border" style={{ borderRadius: "2px" }}>
+                        {[
+                          { label: "Connections", value: "48" },
+                          { label: "Posts", value: "12" },
+                          { label: "Events", value: "5" },
+                        ].map((stat) => (
+                          <div key={stat.label} className="bg-secondary/40 py-3 text-center border-r border-border last:border-r-0">
+                            <div className="text-base font-bold text-foreground tabular-nums">{stat.value}</div>
+                            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{stat.label}</div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-5 border-t border-border pt-4 space-y-2.5">
+                        {[
+                          { emoji: "🏆", text: "Won Hack-a-thon 2024" },
+                          { emoji: "🚀", text: "Building NepalTask" },
+                          { emoji: "💼", text: "Open to internship opportunities" },
+                        ].map((item) => (
+                          <div key={item.text} className="flex items-start gap-2 text-xs text-muted-foreground">
+                            <span className="shrink-0">{item.emoji}</span>
+                            <span className="line-clamp-1">{item.text}</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -694,14 +658,11 @@ const Landing = () => {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════
-            STATS BAND
+            STATS BAND — hairline ledger
            ═══════════════════════════════════════════════════════════════ */}
         <section aria-label="Platform statistics">
           <div className="mx-auto" style={{ maxWidth: "1060px", padding: "0 2rem" }}>
-            <div
-              className="-mt-7 border border-border/50 bg-[hsl(35,20%,97%)]/95 backdrop-blur-md px-8 py-6 shadow-sm"
-              style={{ borderRadius: "0" }}
-            >
+            <div className="-mt-7 border border-border bg-card px-8 py-6" style={{ borderRadius: "4px" }}>
               <div className="flex flex-wrap items-center justify-between gap-y-6">
                 {stats.map((item, i) => (
                   <AnimatedStatCard key={item.label} item={item} index={i} />
@@ -714,11 +675,11 @@ const Landing = () => {
         {/* ═══════════════════════════════════════════════════════════════
             PROBLEM
            ═══════════════════════════════════════════════════════════════ */}
-        <section className="py-28 md:py-36" aria-label="The problem CLN solves">
+        <section className="py-28 md:py-32" aria-label="The problem CLN solves">
           <div className="mx-auto" style={{ maxWidth: "660px", padding: "0 2rem" }}>
             <Reveal axis="y">
-              <span className="text-[11px] font-semibold tracking-[0.15em] uppercase text-accent">The problem</span>
-              <h2 className="mt-4 font-display text-3xl md:text-4xl font-bold leading-tight tracking-tight text-foreground">
+              <SectionRule label="The problem" />
+              <h2 className="mt-6 font-display text-3xl md:text-4xl font-bold leading-tight tracking-tight text-foreground">
                 Nepal has 600,000 undergraduate students. No network connects them.
               </h2>
             </Reveal>
@@ -734,28 +695,28 @@ const Landing = () => {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════
-            FEATURES — Asymmetric list
+            FEATURES — ruled list with comparative sidebar
            ═══════════════════════════════════════════════════════════════ */}
-        <section id="features" className="py-24 md:py-32 bg-background border-t border-border/40" aria-labelledby="features-heading">
+        <section id="features" className="py-24 md:py-28 bg-card border-t border-b border-border" aria-labelledby="features-heading">
           <div className="mx-auto" style={{ maxWidth: "1060px", padding: "0 2rem" }}>
             <Reveal axis="y">
-              <span className="text-[11px] font-semibold tracking-[0.15em] uppercase text-accent">What CLN does</span>
-              <h2 id="features-heading" className="mt-4 font-display text-3xl md:text-4xl font-bold leading-tight tracking-tight">
+              <SectionRule label="What CLN does" />
+              <h2 id="features-heading" className="mt-6 font-display text-3xl md:text-4xl font-bold leading-tight tracking-tight text-foreground">
                 Built for how students
                 <br />
                 actually network.
               </h2>
             </Reveal>
 
-            <div className="mt-14 grid gap-x-14 gap-y-0 md:grid-cols-[5fr_3fr]">
+            <div className="mt-14 grid gap-x-14 gap-y-12 md:grid-cols-[5fr_3fr]">
               <div>
-                <dl className="divide-y divide-border/50">
+                <dl className="divide-y divide-border">
                   {features.map((f, i) => (
                     <Reveal key={f.term} axis="y" delay={i * 60}>
                       <div className="py-6 first:pt-0 last:pb-0">
                         <div className="flex items-start gap-4">
-                          <div className="grid h-8 w-8 shrink-0 place-items-center bg-accent/10 mt-0.5" style={{ borderRadius: "2px" }}>
-                            <f.icon className="h-4 w-4 text-accent" />
+                          <div className="grid h-8 w-8 shrink-0 place-items-center bg-primary/10 mt-0.5 rounded-[2px]">
+                            <f.icon className="h-4 w-4 text-primary" />
                           </div>
                           <div>
                             <dt className="font-semibold text-sm text-foreground">{f.term}</dt>
@@ -768,27 +729,25 @@ const Landing = () => {
                 </dl>
               </div>
 
-              {/* Right column — quiet counterpoint */}
+              {/* Right column — the difference */}
               <Reveal axis="y" delay={200}>
-                <div className="hidden md:block mt-6">
-                  <div className="border border-border/40 bg-muted/20 px-6 py-8" style={{ borderRadius: "0" }}>
-                    <p className="text-[11px] font-semibold tracking-[0.15em] uppercase text-muted-foreground">The difference</p>
-                    <div className="mt-5 space-y-4">
-                      {[
-                        { label: "LinkedIn", verdict: "Built for professionals, not students" },
-                        { label: "Facebook groups", verdict: "Noisy, unstructured, full of spam" },
-                        { label: "CLN", verdict: "Student-only, college-aware, built for Nepal" },
-                      ].map((item) => (
-                        <div key={item.label} className="flex items-start gap-3">
-                          <span className={`text-xs font-bold uppercase tracking-wide shrink-0 w-24 ${item.label === "CLN" ? "text-accent" : "text-muted-foreground/60"}`}>
-                            {item.label}
-                          </span>
-                          <span className={`text-xs leading-relaxed ${item.label === "CLN" ? "text-foreground font-medium" : "text-muted-foreground"}`}>
-                            {item.verdict}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                <div className="mt-6 border border-border bg-background px-6 py-8" style={{ borderRadius: "4px" }}>
+                  <p className="text-[11px] font-semibold tracking-[0.15em] uppercase text-muted-foreground">The difference</p>
+                  <div className="mt-5 space-y-5">
+                    {[
+                      { label: "LinkedIn", verdict: "Built for professionals, not students" },
+                      { label: "Facebook groups", verdict: "Noisy, unstructured, full of spam" },
+                      { label: "CLN", verdict: "Student-only, college-aware, built for Nepal" },
+                    ].map((item) => (
+                      <div key={item.label} className="flex items-start gap-3 border-b border-border/60 pb-5 last:border-b-0 last:pb-0">
+                        <span className={`text-xs font-bold uppercase tracking-wide shrink-0 w-24 ${item.label === "CLN" ? "text-primary" : "text-muted-foreground/60"}`}>
+                          {item.label}
+                        </span>
+                        <span className={`text-xs leading-relaxed ${item.label === "CLN" ? "text-foreground font-medium" : "text-muted-foreground"}`}>
+                          {item.verdict}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </Reveal>
@@ -797,35 +756,32 @@ const Landing = () => {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════
-            HOW IT WORKS
+            HOW IT WORKS — numbered notice column
            ═══════════════════════════════════════════════════════════════ */}
-        <section id="how-it-works" className="py-24 md:py-32" style={{ background: "hsl(35, 20%, 96%)" }} aria-labelledby="how-it-works-heading">
+        <section id="how-it-works" className="py-24 md:py-28 bg-background" aria-labelledby="how-it-works-heading">
           <div className="mx-auto" style={{ maxWidth: "660px", padding: "0 2rem" }}>
             <Reveal axis="y" className="text-center">
-              <span className="text-[11px] font-semibold tracking-[0.15em] uppercase text-accent">How it works</span>
-              <h2 id="how-it-works-heading" className="mt-4 font-display text-3xl md:text-4xl font-bold leading-tight tracking-tight">
+              <SectionRule label="How it works" />
+              <h2 id="how-it-works-heading" className="mt-6 font-display text-3xl md:text-4xl font-bold leading-tight tracking-tight">
                 Four steps to your
                 <br />
                 student network.
               </h2>
             </Reveal>
 
-            <div className="mt-14 space-y-12">
+            <div className="mt-14 space-y-10">
               {steps.map((step, i) => (
                 <Reveal key={step.number} axis="y" delay={i * 70}>
                   <div className="flex gap-6">
                     <div className="flex flex-col items-center">
-                      <div
-                        className="grid h-10 w-10 shrink-0 place-items-center bg-primary text-primary-foreground text-sm font-bold"
-                        style={{ borderRadius: "2px" }}
-                      >
+                      <div className="grid h-10 w-10 shrink-0 place-items-center bg-primary text-primary-foreground text-sm font-bold rounded-[2px] font-display">
                         {step.number}
                       </div>
-                      {i < steps.length - 1 && <div className="w-px flex-1 bg-border/60 mt-3" aria-hidden="true" />}
+                      {i < steps.length - 1 && <div className="w-px flex-1 bg-border mt-3" aria-hidden="true" />}
                     </div>
                     <div className={i < steps.length - 1 ? "pb-4" : ""}>
-                      <div className="grid h-8 w-8 place-items-center bg-accent/10 mb-3" style={{ borderRadius: "2px" }}>
-                        <step.icon className="h-4 w-4 text-accent" />
+                      <div className="grid h-8 w-8 place-items-center bg-primary/10 mb-3 rounded-[2px]">
+                        <step.icon className="h-4 w-4 text-primary" />
                       </div>
                       <h3 className="font-semibold text-base text-foreground">{step.title}</h3>
                       <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground max-w-[48ch]">{step.desc}</p>
@@ -838,35 +794,32 @@ const Landing = () => {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════
-            TESTIMONIALS — Single strong quotes, no carousel
+            TESTIMONIALS — ruled grid
            ═══════════════════════════════════════════════════════════════ */}
-        <section id="testimonials" className="py-24 md:py-32 bg-background border-t border-border/40" aria-labelledby="testimonials-heading">
+        <section id="testimonials" className="py-24 md:py-28 bg-card border-t border-b border-border" aria-labelledby="testimonials-heading">
           <div className="mx-auto" style={{ maxWidth: "860px", padding: "0 2rem" }}>
             <Reveal axis="y" className="text-center">
-              <span className="text-[11px] font-semibold tracking-[0.15em] uppercase text-accent">Students</span>
-              <h2 id="testimonials-heading" className="mt-4 font-display text-3xl md:text-4xl font-bold leading-tight tracking-tight">
+              <SectionRule label="Students" />
+              <h2 id="testimonials-heading" className="mt-6 font-display text-3xl md:text-4xl font-bold leading-tight tracking-tight">
                 What students say.
               </h2>
               <p className="mt-3 text-sm text-muted-foreground max-w-lg mx-auto">
-             Thousands of students across Nepal are already building their careers on CLN.
+                Thousands of students across Nepal are already building their careers on CLN.
               </p>
             </Reveal>
 
             <div className="mt-12 grid gap-6 md:grid-cols-3">
               {testimonials.map((t, i) => (
                 <Reveal key={t.name} axis="y" delay={i * 80}>
-                  <div className="border border-border/50 bg-card px-6 py-7 h-full flex flex-col" style={{ borderRadius: "0" }}>
+                  <div className="flex h-full flex-col border border-border bg-background px-6 py-7" style={{ borderRadius: "4px" }}>
                     <div className="flex items-center gap-1 mb-4">
                       {[...Array(5)].map((_, idx) => (
-                        <Star key={idx} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                        <Star key={idx} className="h-3.5 w-3.5 fill-primary text-primary" />
                       ))}
                     </div>
                     <p className="text-sm leading-[1.8] text-muted-foreground flex-1">"{t.quote}"</p>
-                    <footer className="mt-5 pt-4 border-t border-border/40 flex items-center gap-3">
-                      <div
-                        className="grid h-9 w-9 shrink-0 place-items-center bg-primary text-primary-foreground text-xs font-bold"
-                        style={{ borderRadius: "2px" }}
-                      >
+                    <footer className="mt-5 pt-4 border-t border-border flex items-center gap-3">
+                      <div className="grid h-9 w-9 shrink-0 place-items-center bg-primary/10 text-primary text-xs font-bold rounded-[2px] font-display">
                         {t.initials}
                       </div>
                       <div>
@@ -882,52 +835,47 @@ const Landing = () => {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════
-            CTA
+            CTA — pinned notice
            ═══════════════════════════════════════════════════════════════ */}
-        <section className="py-28 md:py-36 bg-primary" aria-labelledby="cta-heading">
+        <section className="py-28 md:py-32 bg-background" aria-labelledby="cta-heading">
           <div className="mx-auto text-center" style={{ maxWidth: "600px", padding: "0 2rem" }}>
             <Reveal axis="y">
-              <span
-                className="inline-flex items-center gap-2 border border-primary-foreground/15 px-3 py-1 text-[11px] font-semibold tracking-[0.15em] uppercase text-primary-foreground/80"
-                style={{ borderRadius: "2px", background: "hsl(var(--primary-foreground)/0.06)" }}
-              >
-                <Sparkles className="h-3 w-3 text-accent" />
+              <span className="chip">
+                <Sparkles className="h-3 w-3 text-primary" />
                 2,500+ students already on CLN
               </span>
             </Reveal>
 
             <Reveal axis="y" delay={100}>
-              <h2 id="cta-heading" className="mt-6 font-display text-3xl md:text-4xl font-bold leading-tight tracking-tight text-primary-foreground">
+              <h2 id="cta-heading" className="mt-7 font-display text-3xl md:text-4xl font-bold leading-tight tracking-tight text-foreground">
                 Ready to build your network?
               </h2>
-              <p className="mt-4 text-sm leading-relaxed text-primary-foreground/75 mx-auto max-w-[44ch]">
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground mx-auto max-w-[44ch]">
                 Create a profile, find your people, and start building a career network
                 that actually reflects what you study and who you are.
               </p>
             </Reveal>
 
             <Reveal axis="y" delay={200}>
-              <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+              <div className="mt-9 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button
                   asChild
-                  style={{ borderRadius: "4px" }}
-                  className="bg-accent text-accent-foreground hover:bg-accent/90 text-sm font-semibold h-11 px-6 shadow-sm"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-semibold h-12 px-7"
                 >
                   <Link to={primaryHref}>
                     {user ? "Open CLN" : "Join CareerLink Nepal — Free"}
-                    <ArrowRight className="ml-2 h-3.5 w-3.5" />
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
                 {!user && (
                   <Button
                     asChild
                     variant="outline"
-                    style={{ borderRadius: "4px", borderColor: "hsl(var(--primary-foreground)/0.25)" }}
-                    className="bg-primary-foreground/8 text-primary-foreground hover:bg-primary-foreground/12 text-sm font-semibold h-11 px-6"
+                    className="h-12 px-7 text-sm font-semibold"
                   >
                     <Link to="/login">
                       Sign in
-                      <ChevronRight className="ml-1.5 h-3.5 w-3.5" />
+                      <ChevronRight className="ml-1.5 h-4 w-4" />
                     </Link>
                   </Button>
                 )}
@@ -940,14 +888,14 @@ const Landing = () => {
       {/* ═══════════════════════════════════════════════════════════════
           FOOTER
          ═══════════════════════════════════════════════════════════════ */}
-      <footer className="bg-background border-t border-border/40">
+      <footer className="bg-card border-t border-border">
         <div className="mx-auto py-16" style={{ maxWidth: "1060px", padding: "3rem 2rem" }}>
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
             <div>
               <Link to="/" className="flex items-center gap-2.5 mb-3" aria-label="CareerLink Nepal home">
                 <img src="/cln.png" alt="" className="h-7 w-7 object-contain" />
-                <span className="font-bold text-sm tracking-tight">
-                  CareerLink <span className="text-accent">Nepal</span>
+                <span className="font-display font-bold text-base tracking-tight">
+                  CareerLink <span className="text-primary">Nepal</span>
                 </span>
               </Link>
               <p className="text-xs text-muted-foreground leading-relaxed max-w-[32ch]">
@@ -985,7 +933,7 @@ const Landing = () => {
             </div>
           </div>
 
-          <div className="mt-12 pt-6 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-[11px] text-muted-foreground tracking-wide">
               &copy; {new Date().getFullYear()} CareerLink Nepal
             </p>

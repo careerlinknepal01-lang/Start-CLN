@@ -46,7 +46,7 @@ export default function StudyPartners() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             placeholder="Search by subjects, skills, or bio..."
-            className="pl-10 h-12 text-base rounded-full bg-background border-border/50 shadow-sm focus-visible:ring-primary/20"
+            className="pl-10 h-12 text-base rounded-full bg-background border-border/50 focus-visible:ring-primary/20"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -84,7 +84,7 @@ export default function StudyPartners() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {partners?.map((partner) => (
-              <Card key={partner.id} className="group overflow-hidden transition-all hover:shadow-md hover:border-primary/50">
+              <Card key={partner.id} className="group overflow-hidden transition-all hover:border-primary/50">
                 <CardHeader className="flex flex-row items-center gap-4 pb-3">
                   <UserAvatar
                     user={{

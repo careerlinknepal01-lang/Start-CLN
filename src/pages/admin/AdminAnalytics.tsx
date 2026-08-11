@@ -131,8 +131,8 @@ export default function AdminAnalytics() {
                   <YAxis allowDecimals={false} tickLine={false} axisLine={false} className="fill-muted-foreground text-xs" />
                   <Tooltip />
                   <Legend />
-                  <Area type="monotone" dataKey="signups" name="Signups" stroke="#2563eb" fill="#2563eb" fillOpacity={0.15} />
-                  <Area type="monotone" dataKey="posts" name="Posts" stroke="#059669" fill="#059669" fillOpacity={0.15} />
+                  <Area type="monotone" dataKey="signups" name="Signups" stroke="#b45309" fill="#b45309" fillOpacity={0.15} />
+                  <Area type="monotone" dataKey="posts" name="Posts" stroke="#3f6212" fill="#3f6212" fillOpacity={0.15} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>

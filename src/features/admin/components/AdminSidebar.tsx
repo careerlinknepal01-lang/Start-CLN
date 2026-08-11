@@ -53,7 +53,7 @@ export function AdminSidebar() {
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       <SidebarHeader className="p-4">
         <Link to="/admin" className="flex items-center gap-2.5 group">
-          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground">
+          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-[4px] bg-primary text-primary-foreground">
             <ShieldCheck className="h-4 w-4" />
           </div>
           <div className="flex flex-col leading-tight group-data-[collapsible=icon]:hidden">

@@ -52,7 +52,7 @@ export default function AdminSettings() {
     <div className="space-y-6">
       <AdminPageHeader title="Settings" subtitle="Preview basic platform settings stored in this browser." />
 
-      <div className="rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-400">
+      <div className="rounded-md border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
         Not yet connected — these controls are local previews and do not change the live platform.
       </div>
 

@@ -23,12 +23,12 @@ export function TrendingTopicsWidget({ userId, userField }: TrendingTopicsWidget
 
   if (isLoading) {
     return (
-      <div className="rounded-2xl border border-border/50 bg-card text-card-foreground p-6 shadow-sm">
+      <div className="rounded-[6px] border border-border bg-card text-card-foreground p-5">
         <Skeleton className="h-6 w-40 mb-4" />
         <div className="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="flex items-center gap-3">
-              <Skeleton className="h-5 w-5 rounded" />
+              <Skeleton className="h-5 w-5 rounded-[2px]" />
               <div className="flex-1 space-y-1.5">
                 <Skeleton className="h-4 w-3/4" />
                 <Skeleton className="h-3 w-1/2" />
@@ -43,13 +43,13 @@ export function TrendingTopicsWidget({ userId, userField }: TrendingTopicsWidget
   // ── AI-powered trending topics ────────────────────────────────
   if (hasAITopics) {
     return (
-      <div className="rounded-2xl border border-border/50 bg-card text-card-foreground p-6 shadow-sm">
+      <div className="rounded-[6px] border border-border bg-card text-card-foreground p-5">
         <div className="flex items-center justify-between mb-5">
           <h3 className="font-bold text-[15px] text-foreground flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-orange-500" />
+            <TrendingUp className="h-4 w-4 text-primary" />
             {heading}
           </h3>
-          <Link to="/explore" className="text-sm font-medium text-blue-600 hover:underline flex items-center">
+          <Link to="/explore" className="text-sm font-medium text-primary hover:underline flex items-center">
             See all
             <ChevronRight className="h-3.5 w-3.5 ml-0.5" />
           </Link>
@@ -62,9 +62,9 @@ export function TrendingTopicsWidget({ userId, userField }: TrendingTopicsWidget
               key={topic.id}
               className="flex items-start gap-3 group"
             >
-              <Flame className="h-4 w-4 text-orange-500 shrink-0 mt-0.5" />
+              <Flame className="h-4 w-4 text-primary shrink-0 mt-0.5" />
               <div className="min-w-0 flex-1">
-                <p className="font-semibold text-[13px] text-foreground group-hover:text-blue-600 transition-colors leading-tight">
+                <p className="font-semibold text-[13px] text-foreground group-hover:text-primary transition-colors leading-tight">
                   {topic.topic_name}
                 </p>
                 <p className="text-[11px] text-muted-foreground mt-0.5">
@@ -83,9 +83,9 @@ export function TrendingTopicsWidget({ userId, userField }: TrendingTopicsWidget
   // ── Fallback: internal hashtag-based topics ───────────────────
   if (!hashtagTopics || hashtagTopics.length === 0) {
     return (
-      <div className="rounded-2xl border border-border/50 bg-card text-card-foreground p-6 shadow-sm">
+      <div className="rounded-[6px] border border-border bg-card text-card-foreground p-5">
         <h3 className="font-bold text-[15px] text-foreground flex items-center gap-2 mb-4">
-          <TrendingUp className="h-4 w-4 text-orange-500" />
+          <TrendingUp className="h-4 w-4 text-primary" />
           Trending Topics
         </h3>
         <p className="text-sm text-muted-foreground">
@@ -95,23 +95,23 @@ export function TrendingTopicsWidget({ userId, userField }: TrendingTopicsWidget
     );
   }
 
-  // Internal hashtag fallback rendering (original design)
+  // Internal hashtag fallback rendering
   const colors = [
-    "text-blue-500",
-    "text-purple-500",
-    "text-orange-500",
-    "text-emerald-500",
-    "text-rose-500",
+    "text-primary",
+    "text-success",
+    "text-warning",
+    "text-muted-foreground",
+    "text-destructive",
   ];
 
   return (
-    <div className="rounded-2xl border border-border/50 bg-card text-card-foreground p-6 shadow-sm">
+    <div className="rounded-[6px] border border-border bg-card text-card-foreground p-5">
       <div className="flex items-center justify-between mb-5">
         <h3 className="font-bold text-[15px] text-foreground flex items-center gap-2">
-          <TrendingUp className="h-4 w-4 text-orange-500" />
+          <TrendingUp className="h-4 w-4 text-primary" />
           Trending Topics
         </h3>
-        <Link to="/explore" className="text-sm font-medium text-blue-600 hover:underline">
+        <Link to="/explore" className="text-sm font-medium text-primary hover:underline">
           See all
         </Link>
       </div>
@@ -127,11 +127,11 @@ export function TrendingTopicsWidget({ userId, userField }: TrendingTopicsWidget
             >
               <div className="flex items-center gap-3 min-w-0">
                 <Flame className={`h-4 w-4 shrink-0 ${colorClass}`} />
-                <p className="font-semibold text-[13px] text-foreground truncate group-hover:text-blue-600 transition-colors">
+                <p className="font-semibold text-[13px] text-foreground truncate group-hover:text-primary transition-colors">
                   {topic.tag}
                 </p>
               </div>
-              <span className="text-[11px] text-muted-foreground shrink-0">
+              <span className="text-[11px] text-muted-foreground shrink-0 tabular-nums">
                 {topic.count} {topic.count === 1 ? 'post' : 'posts'}
               </span>
             </Link>

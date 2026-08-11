@@ -2,10 +2,10 @@ import type { PasswordStrength, PasswordStrengthLevel } from "../types/auth.type
 
 const STRENGTH_META: Record<PasswordStrengthLevel, { label: string; color: string }> = {
   0: { label: "Very weak", color: "bg-destructive" },
-  1: { label: "Weak", color: "bg-orange-500" },
-  2: { label: "Fair", color: "bg-yellow-500" },
-  3: { label: "Strong", color: "bg-emerald-500" },
-  4: { label: "Very strong", color: "bg-green-600" },
+  1: { label: "Weak", color: "bg-warning" },
+  2: { label: "Fair", color: "bg-warning" },
+  3: { label: "Strong", color: "bg-success" },
+  4: { label: "Very strong", color: "bg-success" },
 };
 
 export function scorePassword(password: string): PasswordStrength {

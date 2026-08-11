@@ -71,8 +71,8 @@ const EmailVerified = () => {
 
           {status === "success" && (
             <>
-              <div className="grid h-16 w-16 place-items-center rounded-full bg-emerald-100 dark:bg-emerald-900/30">
-                <CheckCircle2 className="h-8 w-8 text-emerald-600" aria-hidden="true" />
+              <div className="grid h-16 w-16 place-items-center rounded-full bg-success/10">
+                <CheckCircle2 className="h-8 w-8 text-success" aria-hidden="true" />
               </div>
               <div role="status" aria-live="polite">
                 <h1 className="text-2xl font-bold">Email verified!</h1>

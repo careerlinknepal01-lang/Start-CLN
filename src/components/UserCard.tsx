@@ -60,7 +60,7 @@ export const UserCard = ({ profile, state, connectionId, onChange }: Props) => {
   };
 
   return (
-    <Card className="transition-all duration-200 hover:shadow-soft hover:border-primary/30 group">
+    <Card className="transition-all duration-200 hover:border-primary/30 group">
       <CardContent className="p-4 flex items-start gap-4">
         <Link to={`/profile/${profile.id}`} className="shrink-0">
           <UserAvatar name={profile.name} url={profile.avatar_url} className="h-14 w-14 border-2 border-transparent group-hover:border-primary/20 transition-all" />
@@ -82,29 +82,29 @@ export const UserCard = ({ profile, state, connectionId, onChange }: Props) => {
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
             {state === "none" && (
-              <Button size="sm" onClick={sendRequest} disabled={busy} className="rounded-full shadow-none h-8 text-xs font-semibold">
+              <Button size="sm" onClick={sendRequest} disabled={busy} className="rounded-[4px] shadow-none h-8 text-xs font-semibold">
                 {busy ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <UserPlus className="h-3.5 w-3.5 mr-1.5" />} 
                 Connect
               </Button>
             )}
             {state === "pending_out" && (
-              <Button size="sm" variant="secondary" disabled className="rounded-full h-8 text-xs font-semibold bg-muted">
+              <Button size="sm" variant="secondary" disabled className="rounded-[4px] h-8 text-xs font-semibold bg-muted">
                 <Clock className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" /> Pending
               </Button>
             )}
             {state === "pending_in" && (
               <>
-                <Button size="sm" onClick={() => respond("accepted")} disabled={busy} className="rounded-full h-8 text-xs font-semibold shadow-none">
+                <Button size="sm" onClick={() => respond("accepted")} disabled={busy} className="rounded-[4px] h-8 text-xs font-semibold shadow-none">
                   {busy ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Check className="h-3.5 w-3.5 mr-1.5" />} 
                   Accept
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => respond("rejected")} disabled={busy} className="rounded-full h-8 text-xs font-semibold shadow-none">
+                <Button size="sm" variant="outline" onClick={() => respond("rejected")} disabled={busy} className="rounded-[4px] h-8 text-xs font-semibold shadow-none">
                   <X className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" /> Decline
                 </Button>
               </>
             )}
             {state === "accepted" && (
-              <Button size="sm" asChild variant="secondary" className="rounded-full h-8 text-xs font-semibold">
+              <Button size="sm" asChild variant="secondary" className="rounded-[4px] h-8 text-xs font-semibold">
                 <Link to={`/messages?u=${profile.id}`}>
                   <MessageSquare className="h-3.5 w-3.5 mr-1.5" /> Message
                 </Link>

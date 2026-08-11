@@ -6,8 +6,8 @@ type FormAlertProps = {
 const severityClasses = {
   error: "border-destructive/30 bg-destructive/5 text-destructive",
   warning:
-    "border-yellow-400/40 bg-yellow-50/80 text-yellow-800 dark:text-yellow-200 dark:bg-yellow-900/20",
-  info: "border-blue-400/40 bg-blue-50/80 text-blue-800 dark:text-blue-200 dark:bg-blue-900/20",
+    "border-warning/40 bg-warning/10 text-warning",
+  info: "border-primary/30 bg-primary/5 text-primary",
 };
 
 export function FormAlert({ message, severity = "error" }: FormAlertProps) {

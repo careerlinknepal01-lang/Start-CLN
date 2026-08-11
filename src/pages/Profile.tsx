@@ -167,7 +167,7 @@ const SectionCard = ({
   action?: ReactNode;
   children: ReactNode;
 }) => (
-  <Card className="hover:shadow-soft hover:border-primary/20 transition-all duration-300 group">
+  <Card className="hover:border-primary/20 transition-all duration-300 group">
     <CardContent className="p-6">
       <div className="mb-5 flex items-center justify-between gap-3 border-b border-border/40 pb-4">
         <div className="flex items-center gap-2.5 text-base font-semibold group-hover:text-primary transition-colors">
@@ -977,7 +977,7 @@ const ProfilePage = () => {
                       />
                       <button
                         type="button"
-                        className="absolute bottom-1 right-1 grid h-8 w-8 place-items-center rounded-full border bg-background shadow-sm"
+                        className="absolute bottom-1 right-1 grid h-8 w-8 place-items-center rounded-full border bg-background"
                         onClick={() => avatarInputRef.current?.click()}
                         disabled={uploading === "avatar"}
                       >
@@ -1276,7 +1276,7 @@ const ProfilePage = () => {
                   <Link
                     key={conn.id}
                     to={`/profile/${conn.id}`}
-                    className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/40 hover:shadow-sm transition-all"
+                    className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/40 transition-all"
                   >
                     <UserAvatar name={conn.name} url={conn.avatar_url} className="h-12 w-12 shrink-0" />
                     <div className="min-w-0">

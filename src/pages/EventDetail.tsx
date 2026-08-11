@@ -132,8 +132,8 @@ export default function EventDetail() {
             />
           </div>
         ) : (
-          <div className="w-full h-40 rounded-2xl bg-gradient-to-br from-rose-500/20 via-orange-500/10 to-rose-500/5 flex items-center justify-center">
-            <Calendar className="h-16 w-16 text-rose-300" />
+          <div className="w-full h-40 rounded-[6px] bg-gradient-to-br from-primary/15 via-warning/10 to-primary/5 flex items-center justify-center">
+            <Calendar className="h-16 w-16 text-primary/40" />
           </div>
         )}
 
@@ -157,8 +157,8 @@ export default function EventDetail() {
 
             {/* Date / Time / Location */}
             <div className="grid gap-3 sm:grid-cols-3">
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50">
-                <div className="flex flex-col items-center justify-center h-10 w-10 rounded-lg bg-rose-500/10 text-rose-600 shrink-0">
+              <div className="flex items-center gap-3 p-3 rounded-[6px] bg-muted/50">
+                <div className="flex flex-col items-center justify-center h-10 w-10 rounded-[4px] bg-primary/10 text-primary shrink-0">
                   <span className="text-[9px] font-bold uppercase">{eventDate.toLocaleString("default", { month: "short" })}</span>
                   <span className="text-base font-black leading-none">{day}</span>
                 </div>
@@ -168,16 +168,16 @@ export default function EventDetail() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50">
-                <Clock className="h-10 w-10 text-primary p-2 rounded-lg bg-primary/10 shrink-0" />
+              <div className="flex items-center gap-3 p-3 rounded-[6px] bg-muted/50">
+                <Clock className="h-10 w-10 text-primary p-2 rounded-[4px] bg-primary/10 shrink-0" />
                 <div>
                   <div className="text-xs text-muted-foreground">Time</div>
                   <div className="text-sm font-medium">{time}</div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50">
-                <MapPin className="h-10 w-10 text-emerald-600 p-2 rounded-lg bg-emerald-500/10 shrink-0" />
+              <div className="flex items-center gap-3 p-3 rounded-[6px] bg-muted/50">
+                <MapPin className="h-10 w-10 text-success p-2 rounded-[4px] bg-success/10 shrink-0" />
                 <div>
                   <div className="text-xs text-muted-foreground">Location</div>
                   <div className="text-sm font-medium">{event.location || "TBA"}</div>
@@ -218,7 +218,7 @@ export default function EventDetail() {
                 {/* RSVP - Going */}
                 <Button
                   variant={isGoing ? "outline" : "default"}
-                  className={!isGoing && !isInterested ? "bg-rose-600 hover:bg-rose-700 flex-1" : "flex-1"}
+                  className="flex-1"
                   disabled={rsvp.isPending}
                   onClick={() => {
                     if (!user) return;
@@ -236,7 +236,7 @@ export default function EventDetail() {
                   {rsvp.isPending ? (
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   ) : isGoing ? (
-                    <CheckCircle2 className="h-4 w-4 mr-2 text-emerald-500" />
+                    <CheckCircle2 className="h-4 w-4 mr-2 text-success" />
                   ) : (
                     <Calendar className="h-4 w-4 mr-2" />
                   )}
@@ -262,7 +262,7 @@ export default function EventDetail() {
                   }}
                 >
                   {isInterested ? (
-                    <CheckCircle2 className="h-4 w-4 mr-2 text-amber-500" />
+                    <CheckCircle2 className="h-4 w-4 mr-2 text-warning" />
                   ) : null}
                   {isInterested ? "Interested ✓" : "Interested"}
                 </Button>

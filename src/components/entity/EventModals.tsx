@@ -194,7 +194,7 @@ export function CreateEventDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={submit} disabled={create.isPending || uploading} className="bg-rose-600 hover:bg-rose-700">
+          <Button onClick={submit} disabled={create.isPending || uploading}>
             {(create.isPending || uploading) && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
             {uploading ? "Uploading image..." : "Create event"}
           </Button>
@@ -267,7 +267,6 @@ export function EventDetailDialog({
         </div>
         <DialogFooter>
           <Button
-            className={isGoing ? "" : "bg-rose-600 hover:bg-rose-700"}
             variant={isGoing ? "outline" : "default"}
             disabled={!userId || rsvp.isPending}
             onClick={handleRsvp}

@@ -41,8 +41,8 @@ export function SignupForm() {
       {/* ── Name (First & Last) ── */}
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="signup-first-name" className="text-sm font-medium text-[#3E5375]">
-            First name <span aria-hidden="true" className="text-red-500">*</span>
+          <Label htmlFor="signup-first-name" className="text-sm font-medium text-foreground">
+            First name <span aria-hidden="true" className="text-destructive">*</span>
             <span className="sr-only">(required)</span>
           </Label>
           <Input
@@ -52,14 +52,14 @@ export function SignupForm() {
             aria-required="true"
             aria-invalid={Boolean(errors.firstName)}
             aria-describedby={errors.firstName ? "signup-first-name-error" : undefined}
-            className="min-h-12 border-[#CBD9EC] bg-[#F7F9FC]/50 text-base shadow-sm placeholder:text-[#9DB7DD] focus-visible:ring-[#0B3D91]"
+            className="min-h-12 text-base"
             {...register("firstName")}
           />
           <FieldError id="signup-first-name-error" message={errors.firstName?.message} />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="signup-last-name" className="text-sm font-medium text-[#3E5375]">
-            Last name <span aria-hidden="true" className="text-red-500">*</span>
+          <Label htmlFor="signup-last-name" className="text-sm font-medium text-foreground">
+            Last name <span aria-hidden="true" className="text-destructive">*</span>
             <span className="sr-only">(required)</span>
           </Label>
           <Input
@@ -69,7 +69,7 @@ export function SignupForm() {
             aria-required="true"
             aria-invalid={Boolean(errors.lastName)}
             aria-describedby={errors.lastName ? "signup-last-name-error" : undefined}
-            className="min-h-12 border-[#CBD9EC] bg-[#F7F9FC]/50 text-base shadow-sm placeholder:text-[#9DB7DD] focus-visible:ring-[#0B3D91]"
+            className="min-h-12 text-base"
             {...register("lastName")}
           />
           <FieldError id="signup-last-name-error" message={errors.lastName?.message} />
@@ -78,8 +78,8 @@ export function SignupForm() {
 
       {/* ── Email ── */}
       <div className="space-y-2">
-        <Label htmlFor="signup-email" className="text-sm font-medium text-[#3E5375]">
-          Email <span aria-hidden="true" className="text-red-500">*</span>
+        <Label htmlFor="signup-email" className="text-sm font-medium text-foreground">
+          Email <span aria-hidden="true" className="text-destructive">*</span>
           <span className="sr-only">(required)</span>
         </Label>
         <Input
@@ -90,7 +90,7 @@ export function SignupForm() {
           aria-required="true"
           aria-invalid={Boolean(errors.email)}
           aria-describedby={errors.email ? "signup-email-error" : undefined}
-          className="min-h-12 border-[#CBD9EC] bg-[#F7F9FC]/50 text-base shadow-sm placeholder:text-[#9DB7DD] focus-visible:ring-[#0B3D91]"
+          className="min-h-12 text-base"
           {...register("email")}
         />
         <FieldError id="signup-email-error" message={errors.email?.message} />
@@ -98,8 +98,8 @@ export function SignupForm() {
 
       {/* ── Password ── */}
       <div className="space-y-2">
-        <Label htmlFor="signup-password" className="text-sm font-medium text-[#3E5375]">
-          Password <span aria-hidden="true" className="text-red-500">*</span>
+        <Label htmlFor="signup-password" className="text-sm font-medium text-foreground">
+          Password <span aria-hidden="true" className="text-destructive">*</span>
           <span className="sr-only">(required)</span>
         </Label>
         <PasswordInput
@@ -108,7 +108,7 @@ export function SignupForm() {
           aria-required="true"
           aria-invalid={Boolean(errors.password)}
           aria-describedby={errors.password ? "signup-password-error" : "signup-password-strength"}
-          className="min-h-12 border-[#CBD9EC] bg-[#F7F9FC]/50 text-base shadow-sm focus-visible:ring-[#0B3D91]"
+          className="min-h-12 text-base"
           {...register("password", {
             onChange: (e) => handlePasswordChange(e.target.value),
           })}
@@ -119,7 +119,7 @@ export function SignupForm() {
           <div id="signup-password-strength" className="mt-1">
             <PasswordStrengthMeter password={passwordValue ?? ""} strength={passwordStrength} />
             {!passwordValue && (
-              <p className="mt-1 text-xs text-[#7A889D]">
+              <p className="mt-1 text-xs text-muted-foreground">
                 Use at least 8 characters with uppercase, lowercase, numbers, and symbols.
               </p>
             )}
@@ -130,8 +130,8 @@ export function SignupForm() {
       {/* ── College + Field of study ── */}
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="signup-college" className="text-sm font-medium text-[#3E5375]">
-            College <span aria-hidden="true" className="text-red-500">*</span>
+          <Label htmlFor="signup-college" className="text-sm font-medium text-foreground">
+            College <span aria-hidden="true" className="text-destructive">*</span>
             <span className="sr-only">(required)</span>
           </Label>
           <Input
@@ -141,15 +141,15 @@ export function SignupForm() {
             aria-required="true"
             aria-invalid={Boolean(errors.college)}
             aria-describedby={errors.college ? "signup-college-error" : undefined}
-            className="min-h-12 border-[#CBD9EC] bg-[#F7F9FC]/50 text-base shadow-sm placeholder:text-[#9DB7DD] focus-visible:ring-[#0B3D91]"
+            className="min-h-12 text-base"
             {...register("college")}
           />
           <FieldError id="signup-college-error" message={errors.college?.message} />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="signup-field" className="text-sm font-medium text-[#3E5375]">
-            Field <span aria-hidden="true" className="text-red-500">*</span>
+          <Label htmlFor="signup-field" className="text-sm font-medium text-foreground">
+            Field <span aria-hidden="true" className="text-destructive">*</span>
             <span className="sr-only">(required)</span>
           </Label>
           <Input
@@ -158,7 +158,7 @@ export function SignupForm() {
             aria-required="true"
             aria-invalid={Boolean(errors.field)}
             aria-describedby={errors.field ? "signup-field-error" : undefined}
-            className="min-h-12 border-[#CBD9EC] bg-[#F7F9FC]/50 text-base shadow-sm placeholder:text-[#9DB7DD] focus-visible:ring-[#0B3D91]"
+            className="min-h-12 text-base"
             {...register("field")}
           />
           <FieldError id="signup-field-error" message={errors.field?.message} />
@@ -168,7 +168,7 @@ export function SignupForm() {
       {/* ── Submit ── */}
       <Button
         type="submit"
-        className="mt-3 min-h-12 w-full bg-[#0B3D91] text-base font-semibold text-white shadow-md transition-all hover:bg-[#08275F] active:scale-[0.98]"
+        className="mt-3 min-h-12 w-full bg-primary text-primary-foreground text-base font-semibold hover:bg-primary/90 transition-all active:scale-[0.98]"
         disabled={isSubmitting}
         aria-disabled={isSubmitting}
         aria-busy={isSubmitting}
@@ -183,11 +183,11 @@ export function SignupForm() {
         )}
       </Button>
 
-      <p className="pt-2 text-center text-sm font-medium text-[#687A95]">
+      <p className="pt-2 text-center text-sm font-medium text-muted-foreground">
         Already have an account?{" "}
         <Link
           to="/login"
-          className="font-bold text-[#0B3D91] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D91] focus-visible:ring-offset-2 rounded"
+          className="font-bold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
         >
           Sign in
         </Link>

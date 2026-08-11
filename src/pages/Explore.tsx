@@ -78,8 +78,8 @@ const Explore = () => {
         {/* Header */}
         <div>
           <h1 className="font-display text-[clamp(1.8rem,4vw,2.8rem)] font-bold leading-tight tracking-tight flex items-center gap-3">
-            <span className="grid h-9 w-9 place-items-center bg-accent/10" style={{ borderRadius: "2px" }}>
-              <Compass className="h-5 w-5 text-accent" />
+            <span className="grid h-9 w-9 place-items-center bg-primary/10 rounded-[2px]">
+              <Compass className="h-5 w-5 text-primary" />
             </span>
             Explore
           </h1>

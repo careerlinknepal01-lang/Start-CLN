@@ -101,7 +101,7 @@ export function CreateCommunityDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={submit} disabled={create.isPending} className="bg-blue-600 hover:bg-blue-700">
+          <Button onClick={submit} disabled={create.isPending}>
             {create.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
             Create
           </Button>
@@ -156,7 +156,6 @@ export function CommunityDetailDialog({
             </Button>
           ) : (
             <Button
-              className={isMember ? "" : "bg-blue-600 hover:bg-blue-700"}
               variant={isMember ? "outline" : "default"}
               disabled={!userId || toggle.isPending}
               onClick={() =>

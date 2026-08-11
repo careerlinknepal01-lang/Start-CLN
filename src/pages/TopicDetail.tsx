@@ -19,6 +19,21 @@ import { format } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+type RelatedPost = {
+  id: string;
+  content: string;
+  created_at: string;
+  profiles?: { name: string | null } | null;
+};
+
+type RelatedEvent = {
+  id: string;
+  title: string;
+  date: string;
+  location: string | null;
+  type: string;
+};
+
 export default function TopicDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
@@ -112,7 +127,7 @@ export default function TopicDetail() {
           </div>
 
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-            <Flame className="h-7 w-7 text-orange-500 shrink-0" />
+            <Flame className="h-7 w-7 text-primary shrink-0" />
             {topic.topic_name}
           </h1>
 
@@ -175,7 +190,7 @@ export default function TopicDetail() {
                   rel="noopener noreferrer"
                   className="block"
                 >
-                  <Card className="overflow-hidden hover:border-primary/30 hover:shadow-md transition group">
+                  <Card className="overflow-hidden hover:border-primary/30 transition group">
                     <CardContent className="p-4">
                       <div className="flex gap-4">
                         {article.article_image_url && (
@@ -187,7 +202,7 @@ export default function TopicDetail() {
                           />
                         )}
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-sm text-foreground group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
+                          <h3 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight">
                             {article.article_title}
                           </h3>
                           <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
@@ -221,11 +236,11 @@ export default function TopicDetail() {
               Related CareerLink Posts
             </h2>
             <div className="space-y-2">
-              {relatedPosts.map((post: any) => (
+              {relatedPosts.map((post: RelatedPost) => (
                 <Link
                   key={post.id}
-                  to={`/posts/${post.id}`}
-                  className="block p-3 rounded-xl border border-border hover:border-primary/30 hover:shadow-sm transition"
+                  to={`/post/${post.id}`}
+                  className="block p-3 rounded-xl border border-border hover:border-primary/30 transition"
                 >
                   <p className="text-sm text-foreground line-clamp-2">{post.content}</p>
                   <p className="text-xs text-muted-foreground mt-1">
@@ -245,11 +260,11 @@ export default function TopicDetail() {
               Related Events
             </h2>
             <div className="space-y-2">
-              {relatedEvents.map((event: any) => (
+              {relatedEvents.map((event: RelatedEvent) => (
                 <Link
                   key={event.id}
                   to={`/events/${event.id}`}
-                  className="block p-3 rounded-xl border border-border hover:border-primary/30 hover:shadow-sm transition"
+                  className="block p-3 rounded-xl border border-border hover:border-primary/30 transition"
                 >
                   <p className="text-sm font-semibold text-foreground">{event.title}</p>
                   <p className="text-xs text-muted-foreground mt-1">

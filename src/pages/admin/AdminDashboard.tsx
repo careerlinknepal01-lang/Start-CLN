@@ -88,10 +88,10 @@ export default function AdminDashboard() {
 
       {/* Stat Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total Users" value={users.data} icon={Users} isLoading={users.isLoading} iconClassName="bg-blue-500/10 text-blue-600 dark:text-blue-400" />
-        <StatCard label="Total Posts" value={posts.data} icon={FileText} isLoading={posts.isLoading} iconClassName="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" />
-        <StatCard label="Total Communities" value={communities.data} icon={Network} isLoading={communities.isLoading} iconClassName="bg-violet-500/10 text-violet-600 dark:text-violet-400" />
-        <StatCard label="Total Reports" value={reports.data} icon={Flag} isLoading={reports.isLoading} iconClassName="bg-rose-500/10 text-rose-600 dark:text-rose-400" />
+        <StatCard label="Total Users" value={users.data} icon={Users} isLoading={users.isLoading} iconClassName="bg-primary/10 text-primary" />
+        <StatCard label="Total Posts" value={posts.data} icon={FileText} isLoading={posts.isLoading} iconClassName="bg-success/10 text-success" />
+        <StatCard label="Total Communities" value={communities.data} icon={Network} isLoading={communities.isLoading} iconClassName="bg-warning/10 text-warning" />
+        <StatCard label="Total Reports" value={reports.data} icon={Flag} isLoading={reports.isLoading} iconClassName="bg-destructive/10 text-destructive" />
       </div>
 
       {/* Recent Data */}

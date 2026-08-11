@@ -23,8 +23,8 @@ export function LoginForm() {
       <FormAlert message={formError} severity="error" />
 
       <div className="space-y-2">
-        <Label htmlFor="login-email" className="text-sm font-medium text-[#3E5375]">
-          Email <span aria-hidden="true" className="text-red-500">*</span>
+        <Label htmlFor="login-email" className="text-sm font-medium text-foreground">
+          Email <span aria-hidden="true" className="text-destructive">*</span>
           <span className="sr-only">(required)</span>
         </Label>
         <Input
@@ -34,7 +34,7 @@ export function LoginForm() {
           aria-required="true"
           aria-invalid={Boolean(errors.email)}
           aria-describedby={errors.email ? "login-email-error" : undefined}
-          className="min-h-12 border-[#CBD9EC] bg-[#F7F9FC]/50 text-base shadow-sm placeholder:text-[#9DB7DD] focus-visible:ring-[#0B3D91]"
+          className="min-h-12 text-base"
           placeholder="you@example.com"
           {...register("email")}
         />
@@ -43,11 +43,11 @@ export function LoginForm() {
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="login-password" className="text-sm font-medium text-[#3E5375]">
-            Password <span aria-hidden="true" className="text-red-500">*</span>
+          <Label htmlFor="login-password" className="text-sm font-medium text-foreground">
+            Password <span aria-hidden="true" className="text-destructive">*</span>
             <span className="sr-only">(required)</span>
           </Label>
-          <Link to="/forgot-password" className="text-xs font-semibold text-[#0B3D91] hover:underline" tabIndex={-1}>
+          <Link to="/forgot-password" className="text-xs font-semibold text-primary hover:underline" tabIndex={-1}>
             Forgot password?
           </Link>
         </div>
@@ -57,7 +57,7 @@ export function LoginForm() {
           aria-required="true"
           aria-invalid={Boolean(errors.password)}
           aria-describedby={errors.password ? "login-password-error" : undefined}
-          className="min-h-12 border-[#CBD9EC] bg-[#F7F9FC]/50 text-base shadow-sm focus-visible:ring-[#0B3D91]"
+          className="min-h-12 text-base"
           {...register("password")}
         />
         <FieldError id="login-password-error" message={errors.password?.message} />
@@ -65,7 +65,7 @@ export function LoginForm() {
 
       <Button
         type="submit"
-        className="mt-2 min-h-12 w-full bg-[#0B3D91] text-base font-semibold text-white shadow-md transition-all hover:bg-[#08275F] active:scale-[0.98]"
+        className="mt-2 min-h-12 w-full bg-primary text-primary-foreground text-base font-semibold hover:bg-primary/90 transition-all active:scale-[0.98]"
         disabled={isSubmitting}
         aria-disabled={isSubmitting}
         aria-busy={isSubmitting}
@@ -80,11 +80,11 @@ export function LoginForm() {
         )}
       </Button>
 
-      <p className="pt-2 text-center text-sm font-medium text-[#687A95]">
+      <p className="pt-2 text-center text-sm font-medium text-muted-foreground">
         No account?{" "}
         <Link
           to="/signup"
-          className="font-bold text-[#0B3D91] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B3D91] focus-visible:ring-offset-2 rounded"
+          className="font-bold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
         >
           Create one
         </Link>

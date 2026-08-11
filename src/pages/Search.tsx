@@ -72,7 +72,7 @@ export default function Search() {
 
         <form onSubmit={handleSearch} className="flex gap-2 w-full max-w-2xl mx-auto mt-6">
           <Input 
-            className="h-14 text-lg rounded-full px-6 bg-background shadow-sm border-primary/20"
+            className="h-14 text-lg rounded-full px-6 bg-background border-primary/20"
             placeholder="Search for something..." 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -115,7 +115,7 @@ export default function Search() {
               ) : (
                 <div className="grid gap-4 sm:grid-cols-2">
                   {filteredResults.map((result) => (
-                    <Card key={`${result.type}-${result.id}`} className="transition-all hover:shadow-md hover:border-primary/50 group">
+                    <Card key={`${result.type}-${result.id}`} className="transition-all hover:border-primary/50 group">
                       <Link to={result.url} className="block h-full">
                         <CardHeader className="flex flex-row items-start gap-4 pb-4">
                           {result.imageUrl ? (

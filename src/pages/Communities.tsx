@@ -172,7 +172,7 @@ export default function Communities() {
                 onClick={() => setCategoryFilter(category)}
                 className={`shrink-0 whitespace-nowrap px-4 py-2 text-xs font-semibold tracking-wide transition-all ${
                   categoryFilter === category
-                    ? "bg-primary text-primary-foreground shadow-sm"
+                    ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
                 }`}
                 style={{ borderRadius: "2px" }}
@@ -231,7 +231,7 @@ export default function Communities() {
                   tabIndex={0}
                   role="link"
                   aria-label={`Open ${community.name}`}
-                  className="group relative flex flex-col border border-border bg-card shadow-sm transition hover:border-primary/30 hover:shadow-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="group relative flex flex-col border border-border bg-card transition hover:border-primary/30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   style={{ borderRadius: "0" }}
                 >
                   <div
@@ -249,7 +249,7 @@ export default function Communities() {
 
                   <div className="relative flex flex-1 flex-col p-5 pt-0">
                     <div className="relative -mt-8 mb-3 inline-block">
-                      <div className="inline-block border-2 border-card bg-card shadow-sm" style={{ borderRadius: "2px" }}>
+                      <div className="inline-block border-2 border-card bg-card" style={{ borderRadius: "2px" }}>
                         <UserAvatar
                           name={community.name}
                           url={community.avatar_url}

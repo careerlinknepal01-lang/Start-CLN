@@ -198,11 +198,11 @@ export default function AdminReports() {
                         </TableCell>
                         <TableCell>
                           {status === "resolved" ? (
-                            <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20">
+                            <Badge variant="success" className="border-none">
                               Resolved
                             </Badge>
                           ) : (
-                            <Badge variant="outline" className="border-amber-500/30 text-amber-600 dark:text-amber-400">
+                            <Badge variant="warning" className="border-none">
                               Pending
                             </Badge>
                           )}
@@ -216,7 +216,7 @@ export default function AdminReports() {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-emerald-600 hover:text-emerald-700"
+                                className="h-8 w-8 text-success hover:text-success/80"
                                 onClick={() => resolveMutation.mutate(r.id)}
                                 title="Mark Resolved"
                               >

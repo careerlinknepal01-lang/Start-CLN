@@ -39,7 +39,7 @@ const CommentItem = ({
         />
       </Link>
       <div className="flex-1 min-w-0">
-        <div className="bg-muted/60 rounded-2xl rounded-tl-sm px-3.5 py-2.5">
+        <div className="bg-muted/60 rounded-[6px] px-3.5 py-2.5">
           <Link
             to={`/profile/${comment.author_id}`}
             className="text-xs font-semibold hover:underline text-foreground"
@@ -157,7 +157,7 @@ export const CommentsSection = ({
             placeholder="Write a comment… (Enter to send)"
             rows={1}
             disabled={submitting}
-            className="text-sm resize-none rounded-2xl pr-10 min-h-[40px] py-2 border-border/60 focus:border-primary/50 bg-muted/40"
+            className="text-sm resize-none rounded-[4px] pr-10 min-h-[40px] py-2 border-border/60 focus:border-primary/50 bg-muted/40"
           />
           <Button
             size="icon"

@@ -175,7 +175,7 @@ export default function Events() {
               onClick={() => setFilter(item)}
               className={`shrink-0 whitespace-nowrap px-4 py-2 text-xs font-semibold tracking-wide transition-all ${
                 filter === item
-                  ? "bg-primary text-primary-foreground shadow-sm"
+                  ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
               }`}
               style={{ borderRadius: "2px" }}
@@ -225,7 +225,7 @@ export default function Events() {
             return (
               <article
                 key={event.id}
-                className="group flex flex-col gap-4 border border-border bg-card p-5 shadow-sm transition hover:border-primary/30 hover:shadow-md sm:flex-row"
+                className="group flex flex-col gap-4 border border-border bg-card p-5 transition hover:border-primary/30 sm:flex-row"
                 style={{ borderRadius: "0" }}
               >
                 <div className="flex h-18 w-14 shrink-0 flex-col items-center justify-center bg-primary text-primary-foreground" style={{ borderRadius: "2px" }}>

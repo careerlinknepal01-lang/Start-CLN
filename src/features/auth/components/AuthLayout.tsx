@@ -18,19 +18,18 @@ export function AuthLayout({
   children,
 }: AuthLayoutProps) {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#F7F9FC] text-[#08275F]">
+    <main className="relative min-h-screen overflow-hidden bg-background text-foreground">
       {/* ================================================================
-          BACKGROUND - Clean & Minimal
+          BACKGROUND - Warm paper with subtle marigold wash
       ================================================================= */}
 
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 overflow-hidden"
       >
-        {/* Soft ambient gradients for a "little design" feel without clutter */}
-        <div className="absolute -left-48 -top-48 h-[620px] w-[620px] rounded-full bg-blue-100/35 blur-[100px]" />
-        <div className="absolute -bottom-48 left-[24%] h-[500px] w-[500px] rounded-full bg-amber-100/25 blur-[110px]" />
-        <div className="absolute right-[-220px] top-[20%] h-[560px] w-[560px] rounded-full bg-blue-100/25 blur-[120px]" />
+        <div className="absolute -left-48 -top-48 h-[620px] w-[620px] rounded-full bg-primary/8 blur-[100px]" />
+        <div className="absolute -bottom-48 left-[24%] h-[500px] w-[500px] rounded-full bg-warning/10 blur-[110px]" />
+        <div className="absolute right-[-220px] top-[20%] h-[560px] w-[560px] rounded-full bg-primary/6 blur-[120px]" />
       </div>
 
       {/* ================================================================
@@ -66,10 +65,10 @@ export function AuthLayout({
                 z-20
                 inline-flex
                 w-fit
-                rounded-lg
+                rounded-[4px]
                 focus:outline-none
                 focus-visible:ring-2
-                focus-visible:ring-[#0B3D91]
+                focus-visible:ring-ring
                 focus-visible:ring-offset-4
               "
             >
@@ -94,9 +93,9 @@ export function AuthLayout({
             {/* Main brand message */}
             <div className="relative z-20 mt-9 sm:mt-10">
               <div className="mb-5 flex items-center gap-3">
-                <span className="h-[3px] w-9 rounded-full bg-[#D99319]" />
+                <span className="h-[3px] w-9 rounded-full bg-primary" />
 
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#647797]">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
                   Nepal's Professional Network
                 </span>
               </div>
@@ -105,10 +104,11 @@ export function AuthLayout({
                 className="
                   max-w-[620px]
                   text-[clamp(3.25rem,6vw,5.8rem)]
+                  font-display
                   font-bold
                   leading-[0.92]
-                  tracking-[-0.065em]
-                  text-[#08275F]
+                  tracking-[-0.04em]
+                  text-foreground
                 "
               >
                 CareerLink
@@ -117,12 +117,12 @@ export function AuthLayout({
               </h1>
 
               <p className="mt-6 text-lg font-semibold tracking-[-0.025em] sm:text-xl">
-                <span className="text-[#08275F]">Connect.</span>{" "}
-                <span className="text-[#0797A6]">Learn.</span>{" "}
-                <span className="text-[#D99319]">Grow.</span>
+                <span className="text-foreground">Connect.</span>{" "}
+                <span className="text-primary">Learn.</span>{" "}
+                <span className="text-warning">Grow.</span>
               </p>
 
-              <p className="mt-4 max-w-[430px] text-[15px] leading-6 text-[#596D8B] sm:text-base sm:leading-7">
+              <p className="mt-4 max-w-[430px] text-[15px] leading-6 text-muted-foreground sm:text-base sm:leading-7">
                 Nepal's professional network for students and young
                 professionals.
               </p>
@@ -138,34 +138,34 @@ export function AuthLayout({
               className="
                 w-full
                 max-w-[500px]
-                rounded-[24px]
+                rounded-[6px]
                 border
-                border-[#E7ECF3]
-                bg-white
+                border-border
+                bg-card
                 p-6
-                shadow-[0_20px_60px_rgba(8,39,95,0.09)]
                 sm:p-8
                 lg:p-9
               "
             >
               {/* Auth header */}
               <div className="mb-7">
-                <div className="mb-5 h-[3px] w-10 rounded-full bg-[#D99319]" />
+                <div className="mb-5 h-[3px] w-10 rounded-full bg-primary" />
 
                 <h2
                   className="
+                    font-display
                     text-[28px]
                     font-bold
                     leading-tight
-                    tracking-[-0.035em]
-                    text-[#08275F]
+                    tracking-[-0.03em]
+                    text-foreground
                     sm:text-[32px]
                   "
                 >
                   {heading}
                 </h2>
 
-                <p className="mt-2 max-w-[390px] text-sm leading-6 text-[#687A95] sm:text-[15px]">
+                <p className="mt-2 max-w-[390px] text-sm leading-6 text-muted-foreground sm:text-[15px]">
                   {tagline}
                 </p>
               </div>
@@ -177,8 +177,8 @@ export function AuthLayout({
 
               {/* Footnote */}
               {footnote && (
-                <div className="mt-7 border-t border-[#E8EDF4] pt-5">
-                  <p className="text-center text-[11px] leading-5 text-[#7A889D]">
+                <div className="mt-7 border-t border-border pt-5">
+                  <p className="text-center text-[11px] leading-5 text-muted-foreground">
                     {footnote}
                   </p>
                 </div>

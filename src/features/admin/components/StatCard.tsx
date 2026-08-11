@@ -17,7 +17,7 @@ export function StatCard({ label, value, icon: Icon, iconClassName, isLoading }:
       <CardContent className="flex items-center gap-4 p-5">
         <div
           className={cn(
-            "grid h-12 w-12 shrink-0 place-items-center rounded-xl",
+            "grid h-12 w-12 shrink-0 place-items-center rounded-[4px]",
             iconClassName ?? "bg-primary/10 text-primary"
           )}
         >

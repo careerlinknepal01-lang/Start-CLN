@@ -226,17 +226,17 @@ export default function CommunityDetail() {
 
       {/* Community Header Card */}
       <Card className="overflow-hidden">
-        <div className="h-32 bg-gradient-to-r from-blue-500/30 via-purple-500/20 to-blue-500/10" />
+        <div className="h-32 bg-gradient-to-r from-primary/20 via-warning/15 to-primary/5" />
         <CardContent className="relative px-6 pb-6 pt-0">
           <div className="-mt-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="flex items-end gap-4">
-              <div className="rounded-2xl border-4 border-card overflow-hidden shadow-sm">
+              <div className="rounded-2xl border-4 border-card overflow-hidden">
                 <UserAvatar name={community.name} url={community.avatar_url} className="h-20 w-20 rounded-xl" />
               </div>
               <div className="pb-1">
                 <div className="flex items-center gap-2">
                   <h1 className="text-2xl font-bold">{community.name}</h1>
-                  {isAdmin && <ShieldCheck className="h-5 w-5 text-blue-500" />}
+                  {isAdmin && <ShieldCheck className="h-5 w-5 text-primary" />}
                   {community.is_private ? (
                     <Lock className="h-4 w-4 text-muted-foreground" />
                   ) : (
@@ -257,7 +257,6 @@ export default function CommunityDetail() {
             <div className="shrink-0 flex items-center gap-2">
               <Button
                 variant={isMember ? "outline" : "default"}
-                className={!isMember ? "bg-blue-600 hover:bg-blue-700" : ""}
                 disabled={!user || toggleMembership.isPending}
                 onClick={() => {
                   if (!user) return;
@@ -396,7 +395,7 @@ export default function CommunityDetail() {
               <Link
                 key={m.id}
                 to={`/profile/${m.user_id}`}
-                className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/40 hover:shadow-sm transition-all relative overflow-hidden group"
+                className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/40 transition-all relative overflow-hidden group"
               >
                 <UserAvatar
                   name={m.profile?.name ?? "Member"}
@@ -412,11 +411,11 @@ export default function CommunityDetail() {
                   )}
                 </div>
                 {m.role === "creator" || m.user_id === community.creator_id ? (
-                  <Badge variant="secondary" className="absolute top-2 right-2 text-[9px] bg-amber-100 text-amber-800 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-200 border-none gap-1 px-1.5 py-0">
+                  <Badge variant="warning" className="absolute top-2 right-2 text-[9px] border-none gap-1 px-1.5 py-0">
                     <Crown className="h-2.5 w-2.5" /> Owner
                   </Badge>
                 ) : m.role === "admin" ? (
-                  <Badge variant="secondary" className="absolute top-2 right-2 text-[9px] bg-blue-100 text-blue-800 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-200 border-none gap-1 px-1.5 py-0">
+                  <Badge variant="secondary" className="absolute top-2 right-2 text-[9px] bg-primary/10 text-primary border-none gap-1 px-1.5 py-0">
                     <ShieldCheck className="h-2.5 w-2.5" /> Admin
                   </Badge>
                 ) : null}

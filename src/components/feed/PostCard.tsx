@@ -110,8 +110,8 @@ export const PostCard = ({
 
   return (
     <>
-      <Card className="overflow-hidden border-border/50 shadow-sm hover:shadow-md transition-shadow duration-200 group rounded-2xl mb-6">
-        <CardContent className="p-6">
+      <Card className="overflow-hidden border-border bg-card text-card-foreground group rounded-[6px] mb-5">
+        <CardContent className="p-5">
           {/* ── Author row ─────────────────────────────── */}
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="flex items-center gap-3 min-w-0">
@@ -131,7 +131,7 @@ export const PostCard = ({
                     {post.author_name}
                   </Link>
                   {post.author_is_verified && (
-                    <BadgeCheck className="h-4 w-4 fill-blue-600 text-white shrink-0" />
+                    <BadgeCheck className="h-4 w-4 fill-primary text-primary-foreground shrink-0" />
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground truncate">
@@ -150,7 +150,7 @@ export const PostCard = ({
 
             <div className="flex items-center gap-1.5 shrink-0">
               {post.is_pinned && (
-                <div className="flex items-center gap-1 text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full mr-1">
+                <div className="flex items-center gap-1 text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-[2px] mr-1">
                   <Pin className="h-3 w-3" /> Pinned
                 </div>
               )}
@@ -252,7 +252,7 @@ export const PostCard = ({
                   <Link 
                     key={tag} 
                     to={`/search?q=${encodeURIComponent('#' + tag)}`}
-                    className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-[11px] font-semibold text-blue-600 hover:bg-blue-100 transition-colors"
+                    className="inline-flex items-center rounded-[2px] bg-secondary px-2.5 py-1 text-[11px] font-medium text-secondary-foreground hover:bg-secondary/80 transition-colors"
                   >
                     #{tag}
                   </Link>
@@ -263,7 +263,7 @@ export const PostCard = ({
 
           {/* ── Media image ─────────────────────────────── */}
           {post.media_url && (
-            <div className="mb-3 rounded-xl overflow-hidden border border-border/40">
+            <div className="mb-3 rounded-[4px] overflow-hidden border border-border/50">
               <img
                 src={post.media_url}
                 alt="Post media"
@@ -282,7 +282,7 @@ export const PostCard = ({
               disabled={liking}
               className={`group flex items-center gap-2 text-sm font-medium transition-colors ${
                 post.user_liked
-                  ? "text-red-500"
+                  ? "text-destructive"
                   : "text-muted-foreground hover:text-foreground/90"
               }`}
             >
@@ -300,7 +300,7 @@ export const PostCard = ({
               onClick={() => setShowComments(!showComments)}
               className={`group flex items-center gap-2 text-sm font-medium transition-colors ${
                 showComments
-                  ? "text-[#1e3a8a]"
+                  ? "text-primary"
                   : "text-muted-foreground hover:text-foreground/90"
               }`}
             >

@@ -47,7 +47,7 @@ export function PasswordStrengthMeter({ password, strength }: PasswordStrengthMe
             key={req.label}
             className={cn(
               "flex items-center gap-1.5 text-xs transition-colors",
-              req.met ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"
+              req.met ? "text-success" : "text-muted-foreground"
             )}
           >
             {req.met ? (

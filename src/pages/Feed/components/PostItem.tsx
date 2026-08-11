@@ -16,12 +16,12 @@ export function PostItem({ post, currentUserId, onLike, onBookmark, onCommentCli
   const isAuthor = post.author_id === currentUserId;
 
   return (
-    <div className="bg-card text-card-foreground border border-border rounded-3xl p-6 transition-all hover:shadow-soft">
+    <div className="bg-card text-card-foreground border border-border rounded-[6px] p-6">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <Link to={`/profile/${post.author_id}`}>
-            <UserAvatar name={post.author_name} url={post.author_avatar_url} className="h-12 w-12" />
+            <UserAvatar name={post.author_name} url={post.author_avatar_url} className="h-11 w-11" />
           </Link>
           <div>
             <div className="flex items-center gap-1.5">
@@ -38,7 +38,7 @@ export function PostItem({ post, currentUserId, onLike, onBookmark, onCommentCli
             </div>
           </div>
         </div>
-        <button className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-full hover:bg-secondary">
+        <button className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-[4px] hover:bg-secondary" aria-label="More options">
           <MoreHorizontal className="h-5 w-5" />
         </button>
       </div>
@@ -48,12 +48,12 @@ export function PostItem({ post, currentUserId, onLike, onBookmark, onCommentCli
         <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">
           {post.content}
         </p>
-        
+
         {post.media_url && (
-          <div className="mt-4 rounded-2xl overflow-hidden border border-border/50 bg-secondary/50">
-            <img 
-              src={post.media_url} 
-              alt="Post attachment" 
+          <div className="mt-4 rounded-[6px] overflow-hidden border border-border bg-secondary/50">
+            <img
+              src={post.media_url}
+              alt="Post attachment"
               className="w-full h-auto object-cover max-h-[400px]"
               loading="lazy"
             />
@@ -63,34 +63,35 @@ export function PostItem({ post, currentUserId, onLike, onBookmark, onCommentCli
 
       {/* Tags / Categories */}
       <div className="flex flex-wrap gap-2 mb-5">
-        <span className="px-3 py-1 bg-primary/10 text-primary rounded-lg text-[11px] font-bold capitalize">
+        <span className="px-2.5 py-1 bg-primary/10 text-primary rounded-[2px] text-[11px] font-bold uppercase tracking-wide">
           {post.type.replace('_', ' ')}
         </span>
         {post.tags?.map((tag, i) => (
-          <span key={i} className="px-3 py-1 bg-secondary text-secondary-foreground border border-border/50 rounded-lg text-[11px] font-medium">
+          <span key={i} className="px-2.5 py-1 bg-secondary text-secondary-foreground border border-border rounded-[2px] text-[11px] font-medium">
             #{tag}
           </span>
         ))}
       </div>
 
       {/* Footer / Actions */}
-      <div className="flex items-center justify-between pt-4 border-t border-border/60">
+      <div className="flex items-center justify-between pt-4 border-t border-border">
         <div className="flex items-center gap-2">
-          <button 
+          <button
             onClick={() => onLike(post.id, post.user_liked)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-[12px] font-bold transition-all ${
-              post.user_liked 
-                ? "bg-primary/10 text-primary hover:bg-primary/20" 
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-[4px] text-[12px] font-bold transition-colors ${
+              post.user_liked
+                ? "bg-primary/10 text-primary hover:bg-primary/20"
                 : "bg-transparent text-muted-foreground border border-border hover:bg-secondary hover:text-foreground"
             }`}
+            aria-pressed={post.user_liked}
           >
             <Heart className={`h-4 w-4 ${post.user_liked ? "fill-current" : ""}`} />
             {post.like_count > 0 && post.like_count}
           </button>
-          
-          <button 
+
+          <button
             onClick={() => onCommentClick(post.id)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[12px] font-bold bg-transparent text-muted-foreground border border-border hover:bg-secondary hover:text-foreground transition-all"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-[4px] text-[12px] font-bold bg-transparent text-muted-foreground border border-border hover:bg-secondary hover:text-foreground transition-colors"
           >
             <MessageSquare className="h-4 w-4" />
             {post.comment_count > 0 && post.comment_count}
@@ -98,17 +99,19 @@ export function PostItem({ post, currentUserId, onLike, onBookmark, onCommentCli
         </div>
 
         <div className="flex items-center gap-2">
-          <button 
+          <button
             onClick={() => onBookmark(post.id, post.user_bookmarked)}
-            className={`p-2 rounded-xl transition-all ${
-              post.user_bookmarked 
-                ? "bg-primary/10 text-primary hover:bg-primary/20" 
+            className={`p-2 rounded-[4px] transition-colors ${
+              post.user_bookmarked
+                ? "bg-primary/10 text-primary hover:bg-primary/20"
                 : "text-muted-foreground hover:text-foreground hover:bg-secondary"
             }`}
+            aria-pressed={post.user_bookmarked}
+            aria-label={post.user_bookmarked ? "Remove bookmark" : "Bookmark post"}
           >
             <Bookmark className={`h-4 w-4 ${post.user_bookmarked ? "fill-current" : ""}`} />
           </button>
-          <button className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary transition-all">
+          <button className="p-2 rounded-[4px] text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors" aria-label="Share post">
             <Share2 className="h-4 w-4" />
           </button>
         </div>
