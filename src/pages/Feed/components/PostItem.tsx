@@ -3,7 +3,32 @@ import { formatDistanceToNow } from "date-fns";
 import { BadgeCheck, Heart, MessageSquare, Bookmark, Share2, MoreHorizontal } from "lucide-react";
 import type { FeedPost } from "@/hooks/useFeed";
 import { UserAvatar } from "@/components/UserAvatar";
+import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Flag, Loader2 } from "lucide-react";
+import { useReportPost } from "@/hooks/useFeed";
 
+const REPORT_REASONS = [
+  "Spam or misleading",
+  "Inappropriate content",
+  "Harassment or hate speech",
+  "Copyright violation",
+  "Other",
+];
 interface PostItemProps {
   post: FeedPost;
   currentUserId: string;
@@ -14,8 +39,20 @@ interface PostItemProps {
 
 export function PostItem({ post, currentUserId, onLike, onBookmark, onCommentClick }: PostItemProps) {
   const isAuthor = post.author_id === currentUserId;
+  const [showReportDialog, setShowReportDialog] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const { mutate: reportPost, isPending: reporting } = useReportPost();
+
+  const handleReport = () => {
+    if (!reportReason) return;
+    reportPost(
+      { post_id: post.id, user_id: currentUserId, reason: reportReason },
+      { onSuccess: () => { setShowReportDialog(false); setReportReason(""); } }
+    );
+  };
 
   return (
+    <>
     <div className="bg-card text-card-foreground border border-border rounded-3xl p-6 transition-all hover:shadow-soft">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
@@ -38,9 +75,24 @@ export function PostItem({ post, currentUserId, onLike, onBookmark, onCommentCli
             </div>
           </div>
         </div>
-        <button className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-full hover:bg-secondary">
-          <MoreHorizontal className="h-5 w-5" />
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-full hover:bg-secondary">
+              <MoreHorizontal className="h-5 w-5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-44">
+            {!isAuthor && (
+              <DropdownMenuItem
+                onClick={() => setShowReportDialog(true)}
+                className="gap-2 text-muted-foreground"
+              >
+                <Flag className="h-3.5 w-3.5" />
+                Report post
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Content */}
@@ -114,5 +166,45 @@ export function PostItem({ post, currentUserId, onLike, onBookmark, onCommentCli
         </div>
       </div>
     </div>
+    
+      {/* Report dialog */}
+      <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Report this post</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            <Label className="text-sm text-muted-foreground">Why are you reporting this?</Label>
+            <div className="space-y-1.5">
+              {REPORT_REASONS.map((reason) => (
+                <button
+                  key={reason}
+                  onClick={() => setReportReason(reason)}
+                  className={`w-full text-left text-sm px-3 py-2 rounded-lg border transition-all ${
+                    reportReason === reason
+                      ? "border-primary bg-primary/5 text-foreground"
+                      : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                  }`}
+                >
+                  {reason}
+                </button>
+              ))}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowReportDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleReport}
+              disabled={!reportReason || reporting}
+              className="min-w-[80px]"
+            >
+              {reporting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit report"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

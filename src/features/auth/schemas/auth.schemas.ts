@@ -74,7 +74,8 @@ export const loginSchema = z.object({
 });
 
 export const signupSchema = z.object({
-  name: nameField,
+  firstName: nameField,
+  lastName: nameField,
   email: emailField,
   password: passwordField,
   college: collegeField,

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { PostCard } from "@/components/feed/PostCard";
 import { FeedSkeleton } from "@/components/feed/FeedSkeleton";
 import { useAuth } from "@/hooks/useAuth";
@@ -28,6 +28,8 @@ const PostDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const autoFocusComments = searchParams.get("action") === "comment";
   const [post, setPost] = useState<FeedPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -119,6 +121,7 @@ const PostDetail = () => {
               currentUserId={user?.id || ""}
               currentUserName={user?.user_metadata?.name || "Unknown"}
               currentAvatarUrl={user?.user_metadata?.avatar_url}
+              autoFocusComments={autoFocusComments}
             />
           ) : (
             <div className="py-12 text-center border rounded-xl border-dashed">

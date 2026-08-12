@@ -37,8 +37,9 @@ export async function loginWithEmail(values: LoginSchemaValues): Promise<AuthRes
 
 export async function signupWithEmail(values: SignupSchemaValues): Promise<AuthResult> {
   try {
+    const fullName = `${values.firstName} ${values.lastName}`.trim();
     const metadata = {
-      name: values.name.slice(0, 100),
+      name: fullName.slice(0, 100),
       college: values.college.slice(0, 150),
       field: values.field.slice(0, 100),
     };

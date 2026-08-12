@@ -71,7 +71,7 @@ export default function Feed() {
    * @param {string} postId - The unique identifier of the post.
    */
   const navigateToPostDetails = (postId: string) => {
-    navigate(`/posts/${postId}`);
+    navigate(`/posts/${postId}?action=comment`);
   };
 
   // We abstract the right sidebar content into a variable to keep the main JSX return clean and readable

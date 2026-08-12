@@ -29,7 +29,7 @@ export default function AdminUsers() {
     queryKey: ["admin-users", search, page],
     queryFn: async () => {
       let query = supabase
-        .from("profiles")
+        .from("admin_users_view" as any)
         .select("id, name, email, avatar_url, college, created_at, role, is_verified", { count: "exact" })
         .order("created_at", { ascending: false })
         .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);

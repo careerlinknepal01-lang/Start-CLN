@@ -45,12 +45,12 @@ export default function AdminReports() {
     queryKey: ["admin-reports", statusFilter, page],
     queryFn: async () => {
       let query = supabase
-        .from("feed_post_reports")
+        .from("admin_reports_view" as any)
         .select(
           `id, reason, created_at, status,
            post_id,
-           reporter:user_id(name, email),
-           post:post_id(id, content, author_id)`,
+           reporter_name, reporter_email,
+           post_content, post_author_id`,
           { count: "exact" }
         )
         .order("created_at", { ascending: false })
@@ -177,10 +177,10 @@ export default function AdminReports() {
                 ) : data?.reports.length === 0 ? (
                   <EmptyStateRow colSpan={7} message="No reports found." />
                 ) : (
-                  data?.reports.map((r) => {
-                    const reporter = r.reporter as unknown as { name: string; email: string } | null;
-                    const post = r.post as unknown as { id: string; content: string; author_id: string } | null;
-                    const status = (r as Record<string, unknown>).status as string | undefined;
+                  data?.reports.map((r: any) => {
+                    const reporter = { name: r.reporter_name, email: r.reporter_email };
+                    const post = r.post_id ? { id: r.post_id, content: r.post_content, author_id: r.post_author_id } : null;
+                    const status = r.status as string | undefined;
                     return (
                       <TableRow key={r.id}>
                         <TableCell><Checkbox checked={selectedIds.includes(r.id)} onCheckedChange={(checked) => setSelectedIds((ids) => checked ? [...new Set([...ids, r.id])] : ids.filter((id) => id !== r.id))} aria-label={`Select report ${r.id}`} /></TableCell>

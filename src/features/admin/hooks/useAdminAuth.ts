@@ -10,11 +10,11 @@ export function useAdminAuth() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, name, email, avatar_url, role")
+        .select("id, name, avatar_url, role")
         .eq("id", user!.id)
         .single();
       if (error) throw error;
-      return data;
+      return { ...data, email: user!.email };
     },
     enabled: !!user,
     // Do not keep a revoked admin role in cache for several minutes.

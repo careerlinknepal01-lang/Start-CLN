@@ -48,6 +48,7 @@ interface PostCardProps {
   currentUserName: string;
   currentAvatarUrl?: string | null;
   isCommunityAdmin?: boolean;
+  autoFocusComments?: boolean;
 }
 
 const REPORT_REASONS = [
@@ -64,8 +65,9 @@ export const PostCard = ({
   currentUserName,
   currentAvatarUrl,
   isCommunityAdmin = false,
+  autoFocusComments = false,
 }: PostCardProps) => {
-  const [showComments, setShowComments] = useState(false);
+  const [showComments, setShowComments] = useState(autoFocusComments);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
@@ -328,6 +330,7 @@ export const PostCard = ({
               userId={currentUserId}
               userName={currentUserName}
               avatarUrl={currentAvatarUrl}
+              autoFocus={autoFocusComments}
             />
           )}
         </CardContent>

@@ -28,7 +28,7 @@ function useRecentUsers() {
     queryKey: ["admin-recent-users"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("profiles")
+        .from("admin_users_view" as any)
         .select("id, name, email, avatar_url, college, created_at, role")
         .order("created_at", { ascending: false })
         .limit(5);

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { UserAvatar } from "@/components/UserAvatar";
@@ -14,6 +14,7 @@ interface CommentsSectionProps {
   userId: string;
   userName: string;
   avatarUrl?: string | null;
+  autoFocus?: boolean;
 }
 
 const CommentItem = ({
@@ -95,11 +96,18 @@ export const CommentsSection = ({
   userId,
   userName,
   avatarUrl,
+  autoFocus = false,
 }: CommentsSectionProps) => {
   const [text, setText] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { data: comments, isLoading } = useComments(postId, true);
   const { mutate: createComment, isPending: submitting } = useCreateComment();
+
+  useEffect(() => {
+    if (autoFocus && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [autoFocus]);
 
   const handleSubmit = () => {
     const trimmed = text.trim();
