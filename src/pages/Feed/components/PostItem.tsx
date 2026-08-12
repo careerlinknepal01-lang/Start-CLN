@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Flag, Loader2 } from "lucide-react";
 import { useReportPost } from "@/hooks/useFeed";
+import { toast } from "sonner";
 
 const REPORT_REASONS = [
   "Spam or misleading",
@@ -160,7 +161,14 @@ export function PostItem({ post, currentUserId, onLike, onBookmark, onCommentCli
           >
             <Bookmark className={`h-4 w-4 ${post.user_bookmarked ? "fill-current" : ""}`} />
           </button>
-          <button className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary transition-all">
+          <button 
+            onClick={() => {
+              navigator.clipboard.writeText(`${window.location.origin}/posts/${post.id}`);
+              toast.success("Link copied to clipboard");
+            }}
+            title="Share post"
+            className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary transition-all"
+          >
             <Share2 className="h-4 w-4" />
           </button>
         </div>
