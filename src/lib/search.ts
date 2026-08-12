@@ -2,7 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export interface SearchResult {
   id: string;
-  type: 'person' | 'post' | 'community' | 'event' | 'study_partner';
+  type: 'person' | 'post' | 'community' | 'event';
   title: string;
   subtitle?: string;
   imageUrl?: string;
@@ -144,35 +144,6 @@ export const EventsSearchProvider: SearchProvider = {
   },
 };
 
-export const StudyPartnersSearchProvider: SearchProvider = {
-  name: 'Study Partners',
-  search: async (query: string, limit = 10) => {
-    const t = escapeIlike(query.trim());
-    if (!t) return [];
-    
-    const { data, error } = await supabase
-      .from('study_partners')
-      .select('id, user_id, subjects, created_at, profiles!inner(name, avatar_url)')
-      .eq('status', 'active')
-      .or(`subjects.cs.{${query}},bio.ilike.%${t}%`)
-      .limit(limit);
-
-    if (error) {
-      console.error('Study partners search error:', error);
-      return [];
-    }
-
-    return data.map((item) => ({
-      id: item.id,
-      type: 'study_partner',
-      title: item.profiles.name,
-      subtitle: `Subjects: ${item.subjects.join(', ')}`,
-      imageUrl: item.profiles.avatar_url || undefined,
-      url: `/study-partners/${item.user_id}`,
-      createdAt: item.created_at,
-    }));
-  },
-};
 
 
 export const AdvancedSearch = async (query: string, limitPerProvider = 5): Promise<SearchResult[]> => {
@@ -180,8 +151,7 @@ export const AdvancedSearch = async (query: string, limitPerProvider = 5): Promi
     PeopleSearchProvider,
     PostsSearchProvider,
     CommunitiesSearchProvider,
-    EventsSearchProvider,
-    StudyPartnersSearchProvider
+    EventsSearchProvider
   ];
 
   const results = await Promise.all(providers.map(p => p.search(query, limitPerProvider)));

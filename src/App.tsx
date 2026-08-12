@@ -34,9 +34,6 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Contact = lazy(() => import("./pages/Contact"));
 
-const StudyPartners = lazy(() => import("./pages/StudyPartners"));
-const StudyPartnerDetail = lazy(() => import("./pages/StudyPartnerDetail"));
-const StudyPartnerForm = lazy(() => import("./pages/StudyPartnerForm"));
 const SavedPosts = lazy(() => import("./pages/SavedPosts"));
 const Search = lazy(() => import("./pages/Search"));
 const TopicDetail = lazy(() => import("./pages/TopicDetail"));
@@ -116,11 +113,6 @@ const App = () => (
                 <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
                 <Route path="/events/:id" element={<ProtectedRoute><EventDetail /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                
-                <Route path="/study-partners" element={<ProtectedRoute><StudyPartners /></ProtectedRoute>} />
-                <Route path="/study-partners/create" element={<ProtectedRoute><StudyPartnerForm /></ProtectedRoute>} />
-                <Route path="/study-partners/edit" element={<ProtectedRoute><StudyPartnerForm /></ProtectedRoute>} />
-                <Route path="/study-partners/:id" element={<ProtectedRoute><StudyPartnerDetail /></ProtectedRoute>} />
                 <Route path="/saved-posts" element={<ProtectedRoute><SavedPosts /></ProtectedRoute>} />
                 <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
                 <Route path="/topics/:slug" element={<ProtectedRoute><TopicDetail /></ProtectedRoute>} />

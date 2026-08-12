@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isValidUUID, isValidUrl, validateStudyPartnerData, validateChallengeSubmission } from './validation';
+import { isValidUUID, isValidUrl, validateChallengeSubmission } from './validation';
 
 describe('validation', () => {
   describe('isValidUUID', () => {
@@ -22,24 +22,6 @@ describe('validation', () => {
     });
   });
 
-  describe('validateStudyPartnerData', () => {
-    it('should return errors for too many subjects', () => {
-      const subjects = new Array(11).fill('Subject');
-      const errors = validateStudyPartnerData({ subjects });
-      expect(errors).toContain('You can select a maximum of 10 subjects.');
-    });
-
-    it('should return errors for too long bio', () => {
-      const bio = 'a'.repeat(501);
-      const errors = validateStudyPartnerData({ bio });
-      expect(errors).toContain('Bio must be less than 500 characters.');
-    });
-
-    it('should return empty array for valid data', () => {
-      const errors = validateStudyPartnerData({ subjects: ['Math'], bio: 'Hello' });
-      expect(errors.length).toBe(0);
-    });
-  });
 
   describe('validateChallengeSubmission', () => {
     it('should return errors for invalid url', () => {

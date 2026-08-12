@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Search as SearchIcon, Users, FileText, Globe, Calendar, UserPlus, ExternalLink, Loader2 } from "lucide-react";
+import { Search as SearchIcon, Users, FileText, Globe, Calendar, ExternalLink, Loader2 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,6 @@ export default function Search() {
     post: <FileText className="h-4 w-4" />,
     community: <Globe className="h-4 w-4" />,
     event: <Calendar className="h-4 w-4" />,
-    study_partner: <UserPlus className="h-4 w-4" />,
   };
 
   return (
@@ -91,7 +90,6 @@ export default function Search() {
                 <TabsTrigger value="post" className="min-w-[80px]">Posts</TabsTrigger>
                 <TabsTrigger value="community" className="min-w-[80px]">Communities</TabsTrigger>
                 <TabsTrigger value="event" className="min-w-[80px]">Events</TabsTrigger>
-                <TabsTrigger value="study_partner" className="min-w-[100px]">Study Partners</TabsTrigger>
               </TabsList>
             </div>
 

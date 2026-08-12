@@ -1219,47 +1219,6 @@ export type Database = {
         }
         Relationships: []
       }
-      study_partners: {
-        Row: {
-          availability: string[]
-          bio: string | null
-          created_at: string
-          id: string
-          status: string
-          subjects: string[]
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          availability?: string[]
-          bio?: string | null
-          created_at?: string
-          id?: string
-          status?: string
-          subjects?: string[]
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          availability?: string[]
-          bio?: string | null
-          created_at?: string
-          id?: string
-          status?: string
-          subjects?: string[]
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "study_partners_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       user_badges: {
         Row: {
           awarded_at: string
@@ -1423,7 +1382,6 @@ export type Database = {
         | "connection_accepted"
         | "post_like"
         | "post_comment"
-        | "study_partner_contact"
         | "challenge_new"
         | "challenge_comment"
         | "challenge_like"
@@ -1570,7 +1528,6 @@ export const Constants = {
         "connection_accepted",
         "post_like",
         "post_comment",
-        "study_partner_contact",
         "challenge_new",
         "challenge_comment",
         "challenge_like",

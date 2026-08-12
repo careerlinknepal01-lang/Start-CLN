@@ -16,20 +16,6 @@ export const isValidUrl = (url: string): boolean => {
   }
 };
 
-export const validateStudyPartnerData = (data: { subjects?: string[]; availability?: string[]; bio?: string }) => {
-  const errors: string[] = [];
-  
-  if (data.subjects && data.subjects.length > 10) {
-    errors.push('You can select a maximum of 10 subjects.');
-  }
-  
-  if (data.bio && data.bio.length > 500) {
-    errors.push('Bio must be less than 500 characters.');
-  }
-
-  return errors;
-};
-
 export const validateChallengeSubmission = (url: string, description?: string) => {
   const errors: string[] = [];
   

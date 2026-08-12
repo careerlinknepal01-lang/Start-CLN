@@ -15,23 +15,6 @@ CREATE TABLE saved_posts (
 ALTER TABLE saved_posts ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can manage their own saved posts" ON saved_posts FOR ALL USING (auth.uid() = user_id);
 
--- ==========================================
--- STUDY PARTNERS
--- ==========================================
-CREATE TABLE study_partners (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE UNIQUE,
-    subjects TEXT[] NOT NULL DEFAULT '{}',
-    availability TEXT[] NOT NULL DEFAULT '{}',
-    status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
-    bio TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
-);
-
-ALTER TABLE study_partners ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Study partners are viewable by everyone" ON study_partners FOR SELECT USING (true);
-CREATE POLICY "Users can manage their own study partner profile" ON study_partners FOR ALL USING (auth.uid() = user_id);
 
 -- ==========================================
 -- WEEKLY CHALLENGES
@@ -107,7 +90,5 @@ CREATE INDEX idx_communities_description_gin ON communities USING GIN (descripti
 CREATE INDEX idx_events_title_gin ON events USING GIN (title gin_trgm_ops);
 CREATE INDEX idx_events_description_gin ON events USING GIN (description gin_trgm_ops);
 
-CREATE INDEX idx_study_partners_subjects_gin ON study_partners USING GIN (subjects);
-CREATE INDEX idx_study_partners_bio_gin ON study_partners USING GIN (bio gin_trgm_ops);
 
 CREATE INDEX idx_weekly_challenges_title_gin ON weekly_challenges USING GIN (title gin_trgm_ops);

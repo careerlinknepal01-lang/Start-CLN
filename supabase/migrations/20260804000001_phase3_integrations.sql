@@ -1,6 +1,5 @@
 -- Phase 3: Notifications and Challenge Comments
 
-ALTER TYPE notification_type ADD VALUE IF NOT EXISTS 'study_partner_contact';
 ALTER TYPE notification_type ADD VALUE IF NOT EXISTS 'challenge_new';
 ALTER TYPE notification_type ADD VALUE IF NOT EXISTS 'challenge_comment';
 ALTER TYPE notification_type ADD VALUE IF NOT EXISTS 'challenge_like';

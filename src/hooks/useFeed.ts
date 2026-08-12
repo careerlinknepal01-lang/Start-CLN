@@ -494,7 +494,8 @@ export const useBookmarkPost = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["feed_posts"] });
-      queryClient.invalidateQueries({ queryKey: ["feed_bookmarks"] }); // Re-fetch the saved posts page
+      queryClient.invalidateQueries({ queryKey: ["feed_bookmarks"] });
+      queryClient.invalidateQueries({ queryKey: ["savedPosts"] }); // Re-fetch Saved Posts page
     },
   });
 };
