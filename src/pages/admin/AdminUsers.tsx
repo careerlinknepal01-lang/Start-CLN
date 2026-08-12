@@ -28,14 +28,17 @@ export default function AdminUsers() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users", search, page],
     queryFn: async () => {
+      // Query profiles directly — admin_users_view joins auth.users which is
+      // inaccessible to regular authenticated users, so the view always returns
+      // 0 rows. Profiles has an open SELECT policy for authenticated users.
       let query = supabase
-        .from("admin_users_view" as any)
-        .select("id, name, email, avatar_url, college, created_at, role, is_verified", { count: "exact" })
+        .from("profiles")
+        .select("id, name, avatar_url, college, created_at, role, is_verified", { count: "exact" })
         .order("created_at", { ascending: false })
         .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
 
       if (search.trim()) {
-        query = query.or(`name.ilike.%${search.trim()}%,email.ilike.%${search.trim()}%`);
+        query = query.ilike("name", `%${search.trim()}%`);
       }
 
       const { data, count, error } = await query;
@@ -107,7 +110,7 @@ export default function AdminUsers() {
           <div className="relative w-full max-w-xs">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search by name or email…"
+              placeholder="Search by name…"
               className="pl-9"
               value={search}
               onChange={(e) => {
@@ -157,7 +160,7 @@ export default function AdminUsers() {
                               <p className="truncate text-sm font-medium">{u.name}</p>
                               {u.is_verified && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-primary" />}
                             </div>
-                            <p className="truncate text-xs text-muted-foreground">{u.email}</p>
+                            <p className="truncate text-xs text-muted-foreground">{u.id}</p>
                           </div>
                         </div>
                       </TableCell>
