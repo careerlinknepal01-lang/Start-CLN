@@ -193,11 +193,11 @@ export const CreatePostCard = ({
                       </Button>
                     </div>
                     {mediaUrl && (
-                      <div className="aspect-video overflow-hidden rounded-lg border bg-muted/30">
+                      <div className="aspect-video overflow-hidden rounded-lg border bg-muted/20 flex items-center justify-center">
                         <img
                           src={mediaUrl}
                           alt="Preview"
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-contain"
                           onError={(e) => {
                             e.currentTarget.style.display = "none";
                           }}
