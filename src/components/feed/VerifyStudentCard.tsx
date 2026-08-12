@@ -1,8 +1,36 @@
 import { ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export function VerifyStudentCard() {
+  const { user } = useAuth();
+  
+  const { data: isVerified, isLoading } = useQuery({
+    queryKey: ["user_verified_status", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return false;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("is_verified")
+        .eq("id", user.id)
+        .single();
+      
+      if (error) {
+        console.error("Error fetching verification status:", error);
+        return false;
+      }
+      return data?.is_verified ?? false;
+    },
+    enabled: !!user?.id,
+  });
+
+  if (isLoading || isVerified) {
+    return null;
+  }
+
   return (
     <div className="mx-4 mt-6 overflow-hidden rounded-xl bg-gradient-to-b from-[#0f172a] to-[#1e1b4b] p-5 text-white shadow-lg relative border border-white/5">
       <div className="relative z-10">
