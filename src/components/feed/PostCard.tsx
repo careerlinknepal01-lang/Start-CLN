@@ -265,11 +265,11 @@ export const PostCard = ({
 
           {/* ── Media image ─────────────────────────────── */}
           {post.media_url && (
-            <div className="mb-3 rounded-xl overflow-hidden border border-border/40 bg-muted/5 flex items-center justify-center">
+            <div className="mb-3 rounded-xl overflow-hidden border border-border/40 bg-muted/5 flex items-center justify-center aspect-video w-full">
               <img
                 src={post.media_url}
                 alt="Post media"
-                className="w-full max-h-[500px] object-contain"
+                className="w-full h-full object-contain"
                 loading="lazy"
                 onError={(e) => ((e.currentTarget.parentElement as HTMLElement).style.display = "none")}
               />

@@ -102,11 +102,11 @@ export function PostItem({ post, currentUserId, onLike, onBookmark, onCommentCli
         </p>
         
         {post.media_url && (
-          <div className="mt-4 rounded-2xl overflow-hidden border border-border/50 bg-muted/5 flex items-center justify-center">
+          <div className="mt-4 rounded-2xl overflow-hidden border border-border/50 bg-muted/5 flex items-center justify-center aspect-video w-full">
             <img 
               src={post.media_url} 
               alt="Post attachment" 
-              className="w-full h-auto max-h-[500px] object-contain"
+              className="w-full h-full object-contain"
               loading="lazy"
             />
           </div>
