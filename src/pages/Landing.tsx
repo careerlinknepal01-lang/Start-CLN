@@ -636,8 +636,8 @@ const Landing = () => {
                           >
                             TNS
                           </div>
-                          <div className="font-semibold text-sm mt-3">Tapendra Narayan Acharya</div>
-                          <div className="text-xs text-muted-foreground mt-0.5">BSc CSIT · Tribhuvan University</div>
+                          <div className="font-semibold text-sm mt-3">Surya Narayan Chaudhary Jaiswal Kaluwar</div>
+                          <div className="text-xs text-muted-foreground mt-0.5">BCA · Pokhara University</div>
 
                           <div className="flex flex-wrap gap-1.5 mt-3">
                             {["React", "Python", "UI/UX", "Node.js"].map((skill) => (

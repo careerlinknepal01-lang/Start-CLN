@@ -75,6 +75,11 @@ export async function resendVerificationEmail(email: string): Promise<AuthResult
     const { error } = await supabase.auth.resend({
       type: "signup",
       email: email.trim().toLowerCase(),
+      options: {
+        // Must match the redirect used during signUp — without this, the
+        // re-sent link goes to Supabase's default callback, not our /auth/verified page.
+        emailRedirectTo: `${window.location.origin}/auth/verified`,
+      },
     });
 
     if (error) {

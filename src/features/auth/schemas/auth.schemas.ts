@@ -82,13 +82,17 @@ export const signupSchema = z.object({
   field: fieldOfStudyField,
 });
 
-export const passwordSchema = z.object({
+// Used by the Reset Password page — confirms the two passwords match.
+export const passwordOnlySchema = z.object({
   password: passwordField,
   confirmPassword: z.string().min(1, "Please confirm your password."),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match.",
   path: ["confirmPassword"],
 });
+
+// Alias kept for backward compatibility
+export const passwordSchema = passwordOnlySchema;
 
 export type LoginSchemaValues = z.infer<typeof loginSchema>;
 export type SignupSchemaValues = z.infer<typeof signupSchema>;
