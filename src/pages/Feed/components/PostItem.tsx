@@ -66,7 +66,7 @@ export function PostItem({ post, currentUserId, onLike, onBookmark, onCommentCli
               <Link to={`/profile/${post.author_id}`} className="font-bold text-[15px] text-foreground hover:underline">
                 {post.author_name}
               </Link>
-              {post.author_is_verified && <BadgeCheck className="h-4 w-4 text-primary" />}
+              {post.author_is_verified && <BadgeCheck className="h-4 w-4 fill-blue-500 text-white shrink-0" />}
             </div>
             <div className="text-[12px] text-muted-foreground font-medium">
               {post.author_field} • {post.author_college}

@@ -133,7 +133,7 @@ export const PostCard = ({
                     {post.author_name}
                   </Link>
                   {post.author_is_verified && (
-                    <BadgeCheck className="h-4 w-4 fill-blue-600 text-white shrink-0" />
+                    <BadgeCheck className="h-4 w-4 fill-blue-500 text-white shrink-0" />
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground truncate">

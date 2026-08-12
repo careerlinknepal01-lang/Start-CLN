@@ -33,6 +33,7 @@ import {
   Users,
   X,
   Zap,
+  BadgeCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { pluralize } from "@/lib/pluralize";
@@ -992,8 +993,11 @@ const ProfilePage = () => {
                 </div>
 
                 <div className="min-w-0 pb-1">
-                  <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                  <h1 className="text-2xl font-bold tracking-tight sm:text-3xl flex items-center gap-2">
                     {profile.name || "Unnamed Student"}
+                    {(profile as any).is_verified && (
+                      <BadgeCheck className="h-6 w-6 fill-blue-500 text-white shrink-0" />
+                    )}
                   </h1>
                   <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
                     {profile.field ? (
