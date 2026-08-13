@@ -18,6 +18,7 @@ interface CreatePostCardProps {
   avatarUrl?: string | null;
   defaultOpen?: boolean;
   communityId?: string | null;
+  isVerified?: boolean;
   onPostCreated?: () => void;
 }
 
@@ -27,6 +28,7 @@ export const CreatePostCard = ({
   avatarUrl,
   defaultOpen = false,
   communityId = null,
+  isVerified = true,
   onPostCreated,
 }: CreatePostCardProps) => {
   const navigate = useNavigate();
@@ -127,6 +129,19 @@ export const CreatePostCard = ({
   const maxChars = 3000;
   const isOverLimit = charCount > maxChars;
   const canSubmit = content.trim().length > 0 && !isOverLimit && !isPending && !isUploading;
+
+  if (!isVerified) {
+    return (
+      <Card className="border-border bg-card text-card-foreground shadow-soft overflow-hidden mb-6 rounded-2xl">
+        <CardContent className="p-8 text-center bg-muted/20">
+          <h3 className="font-semibold text-lg text-foreground mb-2">Verify to Start Posting</h3>
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">
+            You must verify your student account to share updates, ask questions, and interact with the community.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="border-border bg-card text-card-foreground shadow-soft overflow-hidden mb-6 rounded-2xl">

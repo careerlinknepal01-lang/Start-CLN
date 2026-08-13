@@ -71,7 +71,7 @@ export default function CommunityDetail() {
   const [loading, setLoading] = useState(true);
   const [postsLoading, setPostsLoading] = useState(false);
   const [memberSearch, setMemberSearch] = useState("");
-  const [me, setMe] = useState<{ id: string; name: string; avatar_url: string | null } | null>(null);
+  const [me, setMe] = useState<{ id: string; name: string; avatar_url: string | null; is_verified: boolean } | null>(null);
 
   const loadCommunity = useCallback(async () => {
     if (!id) return;
@@ -140,8 +140,8 @@ export default function CommunityDetail() {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("id, name, avatar_url").eq("id", user.id).single().then(({ data }) => {
-      if (data) setMe({ id: data.id, name: data.name, avatar_url: data.avatar_url });
+    supabase.from("profiles").select("id, name, avatar_url, is_verified").eq("id", user.id).single().then(({ data }) => {
+      if (data) setMe({ id: data.id, name: data.name, avatar_url: data.avatar_url, is_verified: data.is_verified ?? false });
     });
   }, [user]);
 
@@ -261,6 +261,10 @@ export default function CommunityDetail() {
                 disabled={!user || toggleMembership.isPending}
                 onClick={() => {
                   if (!user) return;
+                  if (!isMember && !me?.is_verified) {
+                    toast.error("You must be a verified student to join communities.");
+                    return;
+                  }
                   toggleMembership.mutate(
                     { communityId: community.id, userId: user.id, isMember, memberId: myMember?.id },
                     { onSuccess: () => loadCommunity() }

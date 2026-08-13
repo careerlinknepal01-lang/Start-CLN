@@ -14,6 +14,7 @@ interface CommentsSectionProps {
   userId: string;
   userName: string;
   avatarUrl?: string | null;
+  isVerified?: boolean;
   autoFocus?: boolean;
 }
 
@@ -96,6 +97,7 @@ export const CommentsSection = ({
   userId,
   userName,
   avatarUrl,
+  isVerified = true,
   autoFocus = false,
 }: CommentsSectionProps) => {
   const [text, setText] = useState("");
@@ -162,16 +164,16 @@ export const CommentsSection = ({
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Write a comment… (Enter to send)"
+            placeholder={!isVerified ? "Verify your account to comment." : "Write a comment… (Enter to send)"}
             rows={1}
-            disabled={submitting}
+            disabled={submitting || !isVerified}
             className="text-sm resize-none rounded-2xl pr-10 min-h-[40px] py-2 border-border/60 focus:border-primary/50 bg-muted/40"
           />
           <Button
             size="icon"
             variant="ghost"
             onClick={handleSubmit}
-            disabled={!text.trim() || submitting}
+            disabled={!text.trim() || submitting || !isVerified}
             className="absolute right-1.5 top-1/2 -translate-y-1/2 h-7 w-7 text-primary disabled:text-muted-foreground"
           >
             {submitting ? (

@@ -41,6 +41,8 @@ import {
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PostCardProps {
   post: FeedPost;
@@ -90,11 +92,34 @@ export const PostCard = ({
       ? post.content.slice(0, CONTENT_LIMIT) + "…"
       : post.content;
 
+  const { data: isVerified } = useQuery({
+    queryKey: ["user_verified_status", currentUserId],
+    queryFn: async () => {
+      if (!currentUserId) return false;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("is_verified")
+        .eq("id", currentUserId)
+        .single();
+      if (error) return false;
+      return data?.is_verified ?? false;
+    },
+    enabled: !!currentUserId,
+  });
+
   const handleLike = () => {
+    if (!isVerified) {
+      toast.error("Please verify your student account to like posts.");
+      return;
+    }
     likePost({ postId: post.id, userId: currentUserId, liked: post.user_liked });
   };
 
   const handleBookmark = () => {
+    if (!isVerified) {
+      toast.error("Please verify your student account to bookmark posts.");
+      return;
+    }
     bookmarkPost({ postId: post.id, userId: currentUserId, bookmarked: post.user_bookmarked });
   };
 
@@ -330,6 +355,7 @@ export const PostCard = ({
               userId={currentUserId}
               userName={currentUserName}
               avatarUrl={currentAvatarUrl}
+              isVerified={isVerified ?? false}
               autoFocus={autoFocusComments}
             />
           )}

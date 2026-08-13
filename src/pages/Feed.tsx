@@ -8,6 +8,7 @@ import { CreatePostCard } from "@/components/feed/CreatePostCard";
 import { UpcomingEventsWidget } from "@/components/feed/UpcomingEventsWidget";
 import { TrendingTopicsWidget } from "@/components/feed/TrendingTopicsWidget";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "sonner";
 
 /**
  * Feed Page Component
@@ -50,6 +51,10 @@ export default function Feed() {
   const handleLikeToggle = (postId: string, isCurrentlyLiked: boolean) => {
     // We cannot execute a like action if the user session is unavailable
     if (!authenticatedUser) return;
+    if (!(currentUserProfile as any)?.is_verified) {
+      toast.error("Please verify your student account to like posts.");
+      return;
+    }
     executeLikePost({ postId, userId: authenticatedUser.id, liked: isCurrentlyLiked });
   };
 
@@ -62,6 +67,10 @@ export default function Feed() {
   const handleBookmarkToggle = (postId: string, isCurrentlyBookmarked: boolean) => {
     // We cannot execute a bookmark action if the user session is unavailable
     if (!authenticatedUser) return;
+    if (!(currentUserProfile as any)?.is_verified) {
+      toast.error("Please verify your student account to bookmark posts.");
+      return;
+    }
     executeBookmarkPost({ postId, userId: authenticatedUser.id, bookmarked: isCurrentlyBookmarked });
   };
 
@@ -98,6 +107,7 @@ export default function Feed() {
             userId={authenticatedUser.id}
             userName={currentUserProfile.name ?? ""}
             avatarUrl={currentUserProfile.avatar_url}
+            isVerified={(currentUserProfile as any)?.is_verified ?? false}
           />
         ) : null
       }

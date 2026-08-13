@@ -389,7 +389,7 @@ const Landing = () => {
                     variant="outline" 
                     size="sm" 
                     style={{ borderRadius: "4px" }} 
-                    className={`text-xs font-semibold tracking-wide uppercase px-3 h-8 ${scrolled ? "text-muted-foreground hover:text-foreground border-border/50" : "text-primary-foreground/70 hover:text-primary-foreground border-primary-foreground/20"}`}
+                    className={`text-xs font-semibold tracking-wide uppercase px-3 h-8 ${scrolled ? "text-muted-foreground hover:text-foreground border-border/50" : "text-primary-foreground/70 hover:text-primary-foreground border-primary-foreground/20 bg-transparent"}`}
                   >
                     <Link to="/admin">Admin Panel</Link>
                   </Button>
@@ -519,7 +519,7 @@ const Landing = () => {
            ═══════════════════════════════════════════════════════════════ */}
         <section className="relative min-h-[88vh] flex items-center overflow-hidden bg-primary" aria-labelledby="hero-heading">
           {/* Clean background — no gradients, no orbs, no grid lines */}
-          <div className="absolute inset-0" style={{ background: "hsl(220, 70%, 18%)" }} />
+          <div className="absolute inset-0" style={{ background: "hsla(223, 52%, 26%, 1.00)" }} />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_30%,hsl(22,95%,55%,0.08),transparent_60%)]" />
 
           <div className="container relative z-10 pt-28 pb-20">

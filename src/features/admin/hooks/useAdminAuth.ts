@@ -17,7 +17,7 @@ export function useAdminAuth() {
       return { ...data, email: user!.email };
     },
     enabled: !!user,
-    // Do not keep a revoked admin role in cache for several minutes.
+    
     staleTime: 30_000,
     refetchInterval: 30_000,
     refetchOnWindowFocus: "always",
