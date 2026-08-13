@@ -97,7 +97,7 @@ export function FeedLayout({
           </div>
 
           {/* Right Sidebar Column */}
-          <div className="hidden lg:block space-y-6">
+          <div className="hidden lg:block sticky top-6 h-[calc(100vh-7rem)] overflow-y-auto overflow-x-hidden pb-4 space-y-6 custom-scrollbar">
             {sidebar}
           </div>
 
