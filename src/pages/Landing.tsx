@@ -634,9 +634,9 @@ const Landing = () => {
                             className="h-20 w-20 border-4 border-background bg-primary flex items-center justify-center text-primary-foreground font-bold text-2xl"
                             style={{ borderRadius: "2px" }}
                           >
-                            TNS
+                            SNC
                           </div>
-                          <div className="font-semibold text-sm mt-3">Surya Narayan Chaudhary Jaiswal Kaluwar</div>
+                          <div className="font-semibold text-sm mt-3">Surya Narayan Chaudhary</div>
                           <div className="text-xs text-muted-foreground mt-0.5">BCA · Pokhara University</div>
 
                           <div className="flex flex-wrap gap-1.5 mt-3">
